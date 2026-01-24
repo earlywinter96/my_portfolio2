@@ -426,9 +426,16 @@ const CodePortfolio = () => {
                 Expert in SQL, Python, and R for extracting actionable insights from complex datasets. 
                 Building robust pipelines, statistical models, and data validation frameworks that drive business decisions.
               </p>
-              <div className="mt-3 md:mt-4 text-sm md:text-base text-cyan-400 font-bold">
-                → 30% accuracy improvement
-              </div>
+            <a 
+                href="https://drive.google.com/file/d/1aiBva-p3G0whtUi42LtZoApMwnMEKM6o/view" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="mt-3 md:mt-4 inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 border border-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all text-sm md:text-base text-cyan-400 font-bold"
+                >
+                <span>🎓</span>
+                <span>IIM Certified</span>
+                <ExternalLink size={16} />
+</a>
             </div>
 
             <div className="group p-6 md:p-8 bg-black/40 backdrop-blur border-2 border-green-500/40 rounded-lg hover:border-green-400 transition-all hover:scale-105 shadow-xl">
@@ -438,9 +445,16 @@ const CodePortfolio = () => {
                 Designing Tableau and Power BI dashboards that drive strategic decisions. 
                 Statistical modeling, A/B testing, and predictive analytics.
               </p>
-              <div className="mt-3 md:mt-4 text-sm md:text-base text-green-400 font-bold">
-                → 25% engagement boost
-              </div>
+            <a 
+                href="https://drive.google.com/file/d/1aiBva-p3G0whtUi42LtZoApMwnMEKM6o/view" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="mt-3 md:mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-400 rounded-lg hover:bg-green-500/30 transition-all text-sm md:text-base text-green-400 font-bold"
+                >
+                <span>🎓</span>
+                <span>IIM Certified</span>
+                <ExternalLink size={16} />
+                </a>
             </div>
 
             <div className="group p-6 md:p-8 bg-black/40 backdrop-blur border-2 border-purple-500/40 rounded-lg hover:border-purple-400 transition-all hover:scale-105 shadow-xl">
@@ -450,9 +464,38 @@ const CodePortfolio = () => {
                 Building AI-powered applications with Gemini API. Creating intelligent agents for 
                 automation, NLP tasks, and decision support systems.
               </p>
-              <div className="mt-3 md:mt-4 text-sm md:text-base text-purple-400 font-bold">
-                → Google Gen AI Certified
-              </div>
+              <div className="flex flex-col gap-2 mt-3 md:mt-4">
+  <a 
+    href="https://drive.google.com/file/d/1D-mqEOAd-ASTHAd9NXrs7tigRFwaFXdS/view" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-400 rounded-lg hover:bg-purple-500/30 transition-all text-sm md:text-base text-purple-400 font-bold"
+  >
+    <span>🎓</span>
+    <span> Gen AI Certified</span>
+    <ExternalLink size={16} />
+  </a>
+  <div className="flex flex-wrap gap-2">
+    <a 
+                href="https://www.credly.com/badges/8a2ada39-462a-40ee-b2ce-1b3f344cbf6a/linked_in_profile" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 bg-yellow-500/20 border border-yellow-400 rounded-md hover:bg-yellow-500/30 transition-all text-xs md:text-sm text-yellow-400 font-semibold"
+                >
+                <span>🏆</span>
+                <span>Vertex AI Badge</span>
+                </a>
+                <a 
+                href="https://www.credly.com/org/google-cloud/badge/explore-generative-ai-with-the-vertex-ai-gemini-api" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 px-3 py-1.5 bg-cyan-500/20 border border-cyan-400 rounded-md hover:bg-cyan-500/30 transition-all text-xs md:text-sm text-cyan-400 font-semibold"
+                >
+                <span>🏆</span>
+                <span>Gemini API Badge</span>
+                </a>
+            </div>
+            </div>
             </div>
           </div>
 
