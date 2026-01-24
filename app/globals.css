@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0a0e27;
+  color: #ffffff;
+  font-family: 'Fira Code', Monaco, 'Courier New', monospace;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar - Terminal theme */
+::-webkit-scrollbar {
+  width: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0e27;
+  border-left: 2px solid rgba(0, 255, 159, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #00ff9f, #00ff00);
+  border-radius: 6px;
+  border: 2px solid #0a0e27;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #00ffaa, #00ff44);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(0, 255, 159, 0.4);
+  color: #ffffff;
+}
+
+/* Code block styling */
+code {
+  font-family: 'Fira Code', Monaco, 'Courier New', monospace;
+  color: #ffffff;
+}
+
+/* Smooth animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.7; box-shadow: 0 0 30px rgba(0, 255, 159, 0.5); }
+  50% { opacity: 1; box-shadow: 0 0 60px rgba(0, 255, 159, 0.8); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
