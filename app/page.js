@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, ChevronDown, Globe, TrendingUp, GitBranch } from 'lucide-react';
+import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch } from 'lucide-react';
 
 const CodePortfolio = () => {
   const [activeSection, setActiveSection] = useState('hero');
@@ -26,9 +26,9 @@ const CodePortfolio = () => {
     "...     'AI-powered Applications'",
     "... ]",
     ">>> impact = {",
-    "...     'efficiency': '+60%',",
-    "...     'data_accuracy': '+30%',",
-    "...     'adoption': '+25%'",
+    "...     'efficiency': 'optimized',",
+    "...     'data_accuracy': 'enhanced',",
+    "...     'adoption': 'increased'",
     "... }",
     ">>> print(\"Let's build something impactful with data...\")",
   ];
@@ -163,7 +163,7 @@ const CodePortfolio = () => {
       description: "ATS-powered system analyzing resumes with AI-driven insights, skill gap detection, and career recommendations using advanced NLP.",
       tech: ["Python", "Gemini API", "Flask", "PostgreSQL", "NLP"],
       link: "https://ai-resume-job-analyzer.onrender.com/",
-      github: "https://github.com/earlywinter96/AI-Resume-Job-Match-Analyser",
+      github: "https://github.com/earlywinter96/ai-resume-job-analyzer",
       icon: <Brain className="text-cyan-400" size={32} />
     },
     {
@@ -186,17 +186,58 @@ const CodePortfolio = () => {
       title: "NIA - AI Voice Assistant",
       description: "Voice-controlled AI agent using Gemini API with speech recognition, natural language processing, and automated task execution.",
       tech: ["Python", "Gemini API", "SpeechRecognition", "pyttsx3"],
-      github: "https://github.com/earlywinter96/Voice-AI-Assistant-with-Gemini-API",
+      github: "https://github.com/earlywinter96/AI-Agent-NIA-",
       icon: <Cpu className="text-yellow-400" size={32} />
     }
   ];
 
-  const skills = {
-    "Languages": ["Python", "R", "SQL", "JavaScript"],
-    "Data & AI": ["Pandas", "NumPy", "Gemini API", "Statistical Modeling", "NLP"],
-    "Visualization": ["Tableau", "Power BI", "Plotly", "ggplot2", "Matplotlib"],
-    "Infrastructure": ["Flask", "FastAPI", "PostgreSQL", "Git", "Docker"]
-  };
+  const skillsData = [
+    {
+      title: "Data Operations & Quality",
+      summary: "Ensuring data is trustworthy before it reaches stakeholders.",
+      items: [
+        "Data validation, audits & reconciliation",
+        "Product & entity mapping",
+        "Manual + automated data tagging",
+        "Quality SOPs & checks"
+      ],
+      impact: "Impact: Enhanced data reliability",
+      color: "cyan"
+    },
+    {
+      title: "Programming & Automation",
+      summary: null,
+      items: [
+        "Python (Pandas, NumPy, scripting)",
+        "SQL (joins, transformations, validations)",
+        "R (analytics & processing)"
+      ],
+      impact: "Impact: Reduced manual effort",
+      color: "green"
+    },
+    {
+      title: "Analytics & Visualization",
+      summary: null,
+      items: [
+        "Tableau & Power BI dashboards",
+        "Executive-ready reporting",
+        "Trend & anomaly detection"
+      ],
+      impact: "Impact: Increased adoption",
+      color: "purple"
+    },
+    {
+      title: "AI & Applied Intelligence",
+      summary: null,
+      items: [
+        "Google Gemini API",
+        "AI resume & job analysis systems",
+        "Automation + AI pipelines"
+      ],
+      impact: "Focus: Practical AI adoption, not experiments",
+      color: "yellow"
+    }
+  ];
 
   const experience = [
     {
@@ -235,6 +276,36 @@ const CodePortfolio = () => {
       ]
     }
   ];
+
+  const getColorClasses = (color) => {
+    const colors = {
+      cyan: {
+        border: "border-cyan-500/40",
+        hoverBorder: "hover:border-cyan-400",
+        text: "text-cyan-300",
+        impact: "text-cyan-400"
+      },
+      green: {
+        border: "border-green-500/40",
+        hoverBorder: "hover:border-green-400",
+        text: "text-green-300",
+        impact: "text-green-400"
+      },
+      purple: {
+        border: "border-purple-500/40",
+        hoverBorder: "hover:border-purple-400",
+        text: "text-purple-300",
+        impact: "text-purple-400"
+      },
+      yellow: {
+        border: "border-yellow-500/40",
+        hoverBorder: "hover:border-yellow-400",
+        text: "text-yellow-300",
+        impact: "text-yellow-400"
+      }
+    };
+    return colors[color] || colors.cyan;
+  };
 
   return (
     <div className="relative min-h-screen bg-[#0a0e27] text-white overflow-x-hidden font-mono">
@@ -322,8 +393,7 @@ const CodePortfolio = () => {
               )}
             </code>
           </div>
-
-                  </div>
+        </div>
       </section>
 
       <section id="about" className="relative py-16 md:py-24 lg:py-32 px-4 md:px-6">
@@ -513,33 +583,72 @@ const CodePortfolio = () => {
 
       <section id="skills" className="relative py-16 md:py-24 lg:py-32 px-4 md:px-6 bg-black/20">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-12 md:mb-16 text-center text-white drop-shadow-lg">
-            <span className="text-gray-400">//</span>{' '}
-            <span className="text-cyan-400">Technical Stack</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-center text-white drop-shadow-lg">
+            <span className="text-gray-400">{'<'}</span>
+            <span className="text-cyan-400">skills</span>
+            <span className="text-gray-400">{' />'}</span>
           </h2>
+
+          <div className="mb-12 p-6 bg-black/50 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-xl max-w-4xl mx-auto">
+            <code className="text-white text-sm md:text-base block font-mono">
+              <span className="text-purple-400">const</span> <span className="text-yellow-300">technicalStack</span> = {'{'}<br />
+              &nbsp;&nbsp;<span className="text-cyan-300">focus</span>: <span className="text-green-300">"accuracy, scalability, decision impact"</span>,<br />
+              &nbsp;&nbsp;<span className="text-cyan-300">approach</span>: <span className="text-green-300">"not just tools, but consistent value delivery"</span><br />
+              {'};'}
+            </code>
+          </div>
           
           <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-            {Object.entries(skills).map(([category, items], idx) => (
-              <div
-                key={idx}
-                className="p-6 md:p-8 bg-black/40 backdrop-blur border-2 border-cyan-500/40 rounded-lg hover:border-cyan-400 transition-all shadow-xl"
-              >
-                <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-4 md:mb-6 text-cyan-300 font-mono break-all">
-                  {`const ${category.toLowerCase().replace(' ', '_')} = [`}
-                </h3>
-                <div className="flex flex-wrap gap-2 md:gap-3">
-                  {items.map((skill, i) => (
-                    <span
-                      key={i}
-                      className="px-3 md:px-4 py-1 md:py-2 bg-gradient-to-r from-cyan-500/20 to-green-500/20 border-2 border-cyan-500/50 rounded-lg text-white hover:scale-105 transition-transform cursor-default font-mono font-bold text-xs md:text-sm lg:text-base"
-                    >
-                      "{skill}"{i < items.length - 1 ? ',' : ''}
-                    </span>
-                  ))}
+            {skillsData.map((skill, idx) => {
+              const colorClasses = getColorClasses(skill.color);
+              return (
+                <div
+                  key={idx}
+                  className={`group p-6 md:p-8 bg-black/40 backdrop-blur border-2 ${colorClasses.border} rounded-lg ${colorClasses.hoverBorder} transition-all shadow-xl hover:shadow-2xl hover:scale-[1.02]`}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <Terminal className={colorClasses.impact} size={24} />
+                    <h3 className={`text-xl md:text-2xl font-bold font-mono ${colorClasses.text}`}>
+                      <span className="text-gray-400">{'// '}</span>{skill.title}
+                    </h3>
+                  </div>
+                  
+                  {skill.summary && (
+                    <div className="mb-4 p-3 bg-black/30 rounded border-l-4 border-cyan-500/50">
+                      <code className="text-gray-200 text-sm md:text-base">
+                        <span className="text-purple-400">"""</span> {skill.summary} <span className="text-purple-400">"""</span>
+                      </code>
+                    </div>
+                  )}
+                  
+                  <div className="mb-4 p-4 bg-black/30 rounded-lg border border-cyan-500/20">
+                    <code className="text-white text-sm md:text-base block font-mono">
+                      <span className="text-yellow-300">skills</span> = [<br />
+                      {skill.items.map((item, i) => (
+                        <span key={i}>
+                          &nbsp;&nbsp;<span className="text-green-300">"{item}"</span>
+                          {i < skill.items.length - 1 ? ',' : ''}<br />
+                        </span>
+                      ))}
+                      ]
+                    </code>
+                  </div>
+                  
+                  <div className={`mt-4 p-3 bg-black/30 rounded-lg border border-${skill.color}-500/30`}>
+                    <code className={`${colorClasses.impact} font-bold text-sm md:text-base font-mono`}>
+                      <span className="text-gray-400"># </span>{skill.impact}
+                    </code>
+                  </div>
                 </div>
-                <div className="mt-3 md:mt-4 text-cyan-400 font-mono text-lg md:text-xl">];</div>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+
+          <div className="mt-12 p-6 md:p-8 bg-black/50 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-xl">
+            <code className="text-white text-sm md:text-base lg:text-lg block font-mono">
+              <span className="text-cyan-400">def</span> <span className="text-yellow-300">deliver_value</span>():<br />
+              &nbsp;&nbsp;<span className="text-purple-400">return</span> <span className="text-green-300">"Clean code + Sharp insights + Measurable impact"</span>
+            </code>
           </div>
         </div>
       </section>
@@ -556,8 +665,7 @@ const CodePortfolio = () => {
               <span className="text-cyan-400">function</span>{' '}
               <span className="text-yellow-300">collaborate</span>() {'{'}<br />
               &nbsp;&nbsp;<span className="text-purple-300">return</span>{' '}
-              <span className="text-green-300">"From data pipelines to GenAI apps — I build systems that think."
-</span>;<br />
+              <span className="text-green-300">"From data pipelines to GenAI apps — I build systems that think."</span>;<br />
               {'}'}
             </code>
           </div>
