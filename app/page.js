@@ -163,7 +163,7 @@ const CodePortfolio = () => {
       description: "ATS-powered system analyzing resumes with AI-driven insights, skill gap detection, and career recommendations using advanced NLP.",
       tech: ["Python", "Gemini API", "Flask", "PostgreSQL", "NLP"],
       link: "https://ai-resume-job-analyzer.onrender.com/",
-      github: "https://github.com/hemantso/AI-Resume-Job-Match-Analyser",
+      github: "https://github.com/earlywinter96/AI-Resume-Job-Match-Analyser",
       icon: <Brain className="text-cyan-400" size={32} />
     },
     {
@@ -179,14 +179,14 @@ const CodePortfolio = () => {
       description: "Stack Overflow-inspired forum enhanced with Gemini Pro for contextual AI answers, role-based auth, and async response generation.",
       tech: ["Flask", "Gemini Pro", "SQLite", "REST API"],
       link: "https://stackit2-0.onrender.com/",
-      github: "https://github.com/hemantso/StackIt-2.0",
+      github: "https://github.com/earlywinter96/stackit2.0",
       icon: <Code2 className="text-green-400" size={32} />
     },
     {
       title: "NIA - AI Voice Assistant",
       description: "Voice-controlled AI agent using Gemini API with speech recognition, natural language processing, and automated task execution.",
       tech: ["Python", "Gemini API", "SpeechRecognition", "pyttsx3"],
-      github: "https://github.com/hemantso/Voice-AI-Assistant-with-Gemini-API",
+      github: "https://github.com/earlywinter96/Voice-AI-Assistant-with-Gemini-API",
       icon: <Cpu className="text-yellow-400" size={32} />
     }
   ];
@@ -337,10 +337,10 @@ const CodePortfolio = () => {
             <a href="mailto:hemantsolanki333@gmail.com" className="p-3 md:p-4 lg:p-5 bg-cyan-500/20 backdrop-blur border-2 border-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all hover:scale-110 shadow-lg">
               <Mail className="text-cyan-400" size={20} />
             </a>
-            <a href="https://www.linkedin.com/in/hemant-solanki-data-analyst/" target="_blank" rel="noopener noreferrer" className="p-3 md:p-4 lg:p-5 bg-green-500/20 backdrop-blur border-2 border-green-400 rounded-lg hover:bg-green-500/30 transition-all hover:scale-110 shadow-lg">
+            <a href="https://www.linkedin.com/in/hemant-solanki-366462199/" target="_blank" rel="noopener noreferrer" className="p-3 md:p-4 lg:p-5 bg-green-500/20 backdrop-blur border-2 border-green-400 rounded-lg hover:bg-green-500/30 transition-all hover:scale-110 shadow-lg">
               <Linkedin className="text-green-400" size={20} />
             </a>
-            <a href="https://github.com/hemantso" target="_blank" rel="noopener noreferrer" className="p-3 md:p-4 lg:p-5 bg-purple-500/20 backdrop-blur border-2 border-purple-400 rounded-lg hover:bg-purple-500/30 transition-all hover:scale-110 shadow-lg">
+            <a href="https://github.com/earlywinter96" target="_blank" rel="noopener noreferrer" className="p-3 md:p-4 lg:p-5 bg-purple-500/20 backdrop-blur border-2 border-purple-400 rounded-lg hover:bg-purple-500/30 transition-all hover:scale-110 shadow-lg">
               <Github className="text-purple-400" size={20} />
             </a>
             <a href="https://medium.com/@hemantsolanki333/about" target="_blank" rel="noopener noreferrer" className="p-3 md:p-4 lg:p-5 bg-yellow-500/20 backdrop-blur border-2 border-yellow-400 rounded-lg hover:bg-yellow-500/30 transition-all hover:scale-110 shadow-lg">
@@ -580,10 +580,10 @@ const CodePortfolio = () => {
           </div>
 
           <div className="flex flex-wrap gap-4 md:gap-6 justify-center">
-            <a href="https://www.linkedin.com/in/hemant-solanki-data-analyst/" target="_blank" rel="noopener noreferrer" className="p-4 md:p-5 bg-cyan-500/20 backdrop-blur border-2 border-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all hover:scale-110 shadow-lg">
+            <a href="https://www.linkedin.com/in/hemant-solanki-366462199/" target="_blank" rel="noopener noreferrer" className="p-4 md:p-5 bg-cyan-500/20 backdrop-blur border-2 border-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all hover:scale-110 shadow-lg">
               <Linkedin size={28} className="text-cyan-400" />
             </a>
-            <a href="https://github.com/hemantso" target="_blank" rel="noopener noreferrer" className="p-4 md:p-5 bg-green-500/20 backdrop-blur border-2 border-green-400 rounded-lg hover:bg-green-500/30 transition-all hover:scale-110 shadow-lg">
+            <a href="https://github.com/earlywinter96" target="_blank" rel="noopener noreferrer" className="p-4 md:p-5 bg-green-500/20 backdrop-blur border-2 border-green-400 rounded-lg hover:bg-green-500/30 transition-all hover:scale-110 shadow-lg">
               <Github size={28} className="text-green-400" />
             </a>
             <a href="https://medium.com/@hemantsolanki333/about" target="_blank" rel="noopener noreferrer" className="p-4 md:p-5 bg-purple-500/20 backdrop-blur border-2 border-purple-400 rounded-lg hover:bg-purple-500/30 transition-all hover:scale-110 shadow-lg">
