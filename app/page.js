@@ -274,7 +274,7 @@ const CodePortfolio = () => {
     {
       name: "Mayank Shukla",
       role: "Vice President and Trainer, Operations",
-      company: "Data Bridge Market Research",
+      company: "Fuel Intelligence Pvt Ltd",
       date: "April 2022",
       relationship: "managed Hemant directly",
       quote: "Hemant is an employee who does not give up no matter what happens. He has a will made of iron and has a lot of potential which he uses for the betterment of himself and for the company. Everywhere he is, people will be lucky to have him.",
