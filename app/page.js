@@ -6,7 +6,7 @@ import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain,
 const CodePortfolio = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [terminalText, setTerminalText] = useState('');
-  const [nameText, setNameText] = useState('');
+  const [nameText, setNameText] = useState('Hemant Solanki');
   const [codeLines, setCodeLines] = useState([]);
   const [currentLine, setCurrentLine] = useState(0);
   const [currentChar, setCurrentChar] = useState(0);
@@ -451,27 +451,31 @@ const CodePortfolio = () => {
             
             <div className="max-w-3xl mx-auto mb-8 p-4 md:p-6 lg:p-8 bg-black/60 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-2xl max-h-[400px] overflow-y-auto">
               <code className="text-white text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed block font-mono">
-                {codeLines.map((line, idx) => (
-                  <div key={idx} className="mb-1">
-                    {line.startsWith('>>>') ? (
-                      <>
-                        <span className="text-cyan-400">{line.substring(0, 3)}</span>
-                        <span className="text-white">{line.substring(3)}</span>
-                      </>
-                    ) : line.startsWith('...') ? (
-                      <>
-                        <span className="text-yellow-400">{line.substring(0, 3)}</span>
-                        <span className="text-white">{line.substring(3)}</span>
-                      </>
-                    ) : (
-                      <span className="text-white">{line}</span>
-                    )}
-                    {idx === currentLine && currentChar === line.length && (
-                      <span className="animate-blink text-cyan-400" aria-hidden="true">█</span>
-                    )}
-                  </div>
-                ))}
-                {currentLine === codeLines.length && (
+                {codeLines.length === 0 ? (
+                  <div className="text-gray-400">Loading terminal...</div>
+                ) : (
+                  codeLines.map((line, idx) => (
+                    <div key={idx} className="mb-1">
+                      {line.startsWith('>>>') ? (
+                        <>
+                          <span className="text-cyan-400">{line.substring(0, 3)}</span>
+                          <span className="text-white">{line.substring(3)}</span>
+                        </>
+                      ) : line.startsWith('...') ? (
+                        <>
+                          <span className="text-yellow-400">{line.substring(0, 3)}</span>
+                          <span className="text-white">{line.substring(3)}</span>
+                        </>
+                      ) : (
+                        <span className="text-white">{line}</span>
+                      )}
+                      {idx === currentLine && currentChar === line.length && (
+                        <span className="animate-blink text-cyan-400" aria-hidden="true">█</span>
+                      )}
+                    </div>
+                  ))
+                )}
+                {currentLine === codeLines.length && codeLines.length > 0 && (
                   <span className="animate-blink text-cyan-400" aria-hidden="true">█</span>
                 )}
               </code>
