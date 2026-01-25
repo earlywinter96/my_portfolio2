@@ -1,21 +1,17 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch, Menu, X } from 'lucide-react';
+import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch, Menu, X, Quote } from 'lucide-react';
 
 const CodePortfolio = () => {
   const [activeSection, setActiveSection] = useState('hero');
-  const [terminalText, setTerminalText] = useState('');
-  const [nameText, setNameText] = useState('Hemant Solanki');
+  const nameReveal = "Hemant Solanki";
   const [codeLines, setCodeLines] = useState([]);
   const [currentLine, setCurrentLine] = useState(0);
   const [currentChar, setCurrentChar] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const canvasRef = useRef(null);
-  const fullText = ">>> import analytics, ai, automation";
-  const nameReveal = "Hemant Solanki";
-  const [showFallback, setShowFallback] = useState(false);
   
   const terminalCode = [
     ">>> name = 'Hemant Solanki'",
@@ -34,19 +30,6 @@ const CodePortfolio = () => {
     "... }",
     ">>> print(\"Let's build something impactful...\")",
   ];
-
-  useEffect(() => {
-    let i = 0;
-    const typing = setInterval(() => {
-      if (i < fullText.length) {
-        setTerminalText(fullText.substring(0, i + 1));
-        i++;
-      } else {
-        clearInterval(typing);
-      }
-    }, 100);
-    return () => clearInterval(typing);
-  }, []);
 
   useEffect(() => {
     if (currentLine < terminalCode.length) {
@@ -74,45 +57,9 @@ const CodePortfolio = () => {
     }
   }, [currentLine, currentChar, terminalCode]);
 
-  useEffect(() => {
-    const chars = "!@#$%^&*(){}[]<>/|\\~`?;:+-=_";
-    const glitchChars = "アイウエオカキクケコ01ハヒフヘホ";
-    let frame = 0;
-    const maxFrames = 40;
-    
-    const glitch = setInterval(() => {
-      if (frame < maxFrames) {
-        let result = '';
-        for (let i = 0; i < nameReveal.length; i++) {
-          if (frame > i * 2) {
-            result += nameReveal[i];
-          } else {
-            const randomChar = Math.random() > 0.5 
-              ? chars[Math.floor(Math.random() * chars.length)]
-              : glitchChars[Math.floor(Math.random() * glitchChars.length)];
-            result += randomChar;
-          }
-        }
-        setNameText(result);
-        frame++;
-      } else {
-        setNameText(nameReveal);
-        clearInterval(glitch);
-      }
-    }, 80);
-    
-    // Fallback in case animation fails
-    setTimeout(() => {
-      setNameText(nameReveal);
-      setShowFallback(true);
-    }, 5000);
-    
-    return () => clearInterval(glitch);
-  }, []);
-
   const handleScroll = useCallback(() => {
     setScrollY(window.scrollY);
-    const sections = ['hero', 'about', 'experience', 'projects', 'skills', 'contact'];
+    const sections = ['hero', 'about', 'experience', 'projects', 'skills', 'testimonials', 'contact'];
     const current = sections.find(section => {
       const element = document.getElementById(section);
       if (element) {
@@ -313,37 +260,68 @@ const CodePortfolio = () => {
     }
   ];
 
+  const testimonials = [
+    {
+      name: "Ajay Landge",
+      role: "Colleague",
+      company: "Fuel Intelligence Pvt Ltd",
+      date: "January 2024",
+      relationship: "worked together for 2+ years",
+      quote: "We have been working together for more than 2+ years. And if there is anything to describe you as a person I would say Go-getter and Good listener. Professionally, I utterly appreciate you for shouldering responsibility and putting the company interests ahead of your own as a great team player. You are amazing!",
+      traits: ["Positive", "Curious", "Enthusiastic", "Genuine"],
+      color: "cyan"
+    },
+    {
+      name: "Mayank Shukla",
+      role: "Vice President and Trainer, Operations",
+      company: "Data Bridge Market Research",
+      date: "April 2022",
+      relationship: "managed Hemant directly",
+      quote: "Hemant is an employee who does not give up no matter what happens. He has a will made of iron and has a lot of potential which he uses for the betterment of himself and for the company. Everywhere he is, people will be lucky to have him.",
+      traits: ["Iron Will", "High Potential", "Dedicated"],
+      color: "green"
+    }
+  ];
+
   const getColorClasses = (color) => {
     const colors = {
       cyan: {
         border: "border-cyan-500/40",
         hoverBorder: "hover:border-cyan-400",
         text: "text-cyan-300",
-        impact: "text-cyan-400"
+        impact: "text-cyan-400",
+        bg: "bg-cyan-500/20",
+        quote: "border-cyan-500/50"
       },
       green: {
         border: "border-green-500/40",
         hoverBorder: "hover:border-green-400",
         text: "text-green-300",
-        impact: "text-green-400"
+        impact: "text-green-400",
+        bg: "bg-green-500/20",
+        quote: "border-green-500/50"
       },
       purple: {
         border: "border-purple-500/40",
         hoverBorder: "hover:border-purple-400",
         text: "text-purple-300",
-        impact: "text-purple-400"
+        impact: "text-purple-400",
+        bg: "bg-purple-500/20",
+        quote: "border-purple-500/50"
       },
       yellow: {
         border: "border-yellow-500/40",
         hoverBorder: "hover:border-yellow-400",
         text: "text-yellow-300",
-        impact: "text-yellow-400"
+        impact: "text-yellow-400",
+        bg: "bg-yellow-500/20",
+        quote: "border-yellow-500/50"
       }
     };
     return colors[color] || colors.cyan;
   };
 
-  const navItems = ['About', 'Experience', 'Projects', 'Skills', 'Contact'];
+  const navItems = ['About', 'Experience', 'Projects', 'Skills', 'Testimonials', 'Contact'];
 
   return (
     <div className="relative min-h-screen bg-[#0a0e27] text-white overflow-x-hidden font-mono">
@@ -358,56 +336,73 @@ const CodePortfolio = () => {
         backgroundSize: '50px 50px'
       }} aria-hidden="true" />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#0a0e27]/95 border-b border-cyan-500/30">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Terminal className="text-cyan-400" size={20} aria-hidden="true" />
-            <span className="text-sm md:text-xl font-bold text-cyan-400">hemant@portfolio:~$</span>
+      <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-gradient-to-b from-[#0a0e27]/98 to-[#0a0e27]/95">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          {/* Top bar with terminal and resume */}
+          <div className="flex justify-between items-center py-3 border-b border-cyan-500/20">
+            <div className="flex items-center gap-3">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors" aria-hidden="true"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors" aria-hidden="true"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors" aria-hidden="true"></div>
+              </div>
+              <Terminal className="text-cyan-400 ml-2" size={18} aria-hidden="true" />
+              <span className="text-xs md:text-sm font-bold text-cyan-400 font-mono">hemant@portfolio:~$</span>
+            </div>
+            
+            <a
+              href="https://drive.google.com/file/d/1PVD5m85SBka0tVvd0ilvzdS_zNmI69mg/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-cyan-500/30 to-purple-500/30 border border-cyan-400/50 text-white rounded-md hover:from-cyan-500/40 hover:to-purple-500/40 transition-all text-sm font-semibold shadow-lg hover:shadow-cyan-500/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            >
+              <Download size={14} aria-hidden="true" />
+              Resume
+            </a>
           </div>
-          
-          <div className="hidden md:flex gap-8">
+
+          {/* macOS-style tabs */}
+          <div className="hidden md:flex gap-1 py-2 overflow-x-auto">
             {navItems.map(item => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className={`transition-all duration-300 hover:text-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-[#0a0e27] rounded px-2 py-1 ${
-                  activeSection === item.toLowerCase() ? 'text-cyan-400' : 'text-gray-300'
+                className={`relative group px-5 py-2.5 rounded-t-lg font-mono text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 ${
+                  activeSection === item.toLowerCase()
+                    ? 'bg-gradient-to-b from-cyan-500/20 to-cyan-500/10 text-cyan-300 shadow-lg border-t-2 border-x-2 border-cyan-400/50 translate-y-[-4px]'
+                    : 'text-gray-400 hover:text-cyan-300 hover:bg-white/5 border-t-2 border-x-2 border-transparent hover:border-cyan-500/30 hover:translate-y-[-2px]'
                 }`}
               >
-                {`<${item.toLowerCase()} />`}
+                <span className="relative z-10">{`<${item.toLowerCase()} />`}</span>
+                {activeSection === item.toLowerCase() && (
+                  <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent" aria-hidden="true"></div>
+                )}
               </a>
             ))}
           </div>
-
+          {/* Mobile menu button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-cyan-400 hover:bg-cyan-500/20 rounded focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="md:hidden absolute top-3 right-4 p-2 text-cyan-400 hover:bg-cyan-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 transition-all"
             aria-label="Toggle mobile menu"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
-
-          <a
-            href="https://drive.google.com/file/d/1PVD5m85SBka0tVvd0ilvzdS_zNmI69mg/view?usp=sharing"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-2 px-4 py-2 bg-cyan-500/30 border border-cyan-400 text-white rounded-lg hover:bg-cyan-500/40 transition-all font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-400"
-          >
-            <Download size={16} aria-hidden="true" />
-            Resume
-          </a>
         </div>
 
+        {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-cyan-500/30 bg-[#0a0e27]/98 backdrop-blur-xl">
-            <div className="flex flex-col py-4 px-4 space-y-2">
+          <div className="md:hidden border-t border-cyan-500/30 bg-gradient-to-b from-[#0a0e27]/98 to-[#0a0e27]/95 backdrop-blur-xl">
+            <div className="flex flex-col py-4 px-4 space-y-1">
               {navItems.map(item => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-3 rounded-lg transition-all hover:bg-cyan-500/20 ${
-                    activeSection === item.toLowerCase() ? 'text-cyan-400 bg-cyan-500/10' : 'text-gray-300'
+                  className={`px-4 py-3 rounded-lg transition-all font-mono text-sm ${
+                    activeSection === item.toLowerCase() 
+                      ? 'text-cyan-400 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-l-4 border-cyan-400' 
+                      : 'text-gray-300 hover:bg-white/5 border-l-4 border-transparent hover:border-cyan-500/50'
                   }`}
                 >
                   {`<${item.toLowerCase()} />`}
@@ -417,7 +412,7 @@ const CodePortfolio = () => {
                 href="https://drive.google.com/file/d/1WaJt8LlNR_RKCZrDGsXHhqCVWHy2I16s/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-4 py-3 bg-cyan-500/30 border border-cyan-400 text-white rounded-lg hover:bg-cyan-500/40 transition-all font-semibold"
+                className="flex items-center justify-center gap-2 px-4 py-3 mt-2 bg-gradient-to-r from-cyan-500/30 to-purple-500/30 border border-cyan-400/50 text-white rounded-lg hover:from-cyan-500/40 hover:to-purple-500/40 transition-all font-semibold"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Download size={16} aria-hidden="true" />
@@ -429,24 +424,28 @@ const CodePortfolio = () => {
       </nav>
 
       <main id="main-content">
-        <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 md:px-6 pt-20 pb-32">
+        <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 md:px-6 pt-32 md:pt-40 pb-32">
           <div className="text-center z-10 max-w-5xl w-full" style={{ transform: `translateY(${scrollY * 0.3}px)` }}>
             <div className="mb-8 inline-block">
-              <div className="text-cyan-400 text-sm md:text-lg mb-6 font-mono bg-black/40 px-4 md:px-6 py-2 md:py-3 rounded-lg border border-cyan-500/30">
-                $ <span className="animate-pulse">{terminalText}</span>
-                <span className="animate-blink" aria-hidden="true">█</span>
-              </div>
-              <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-6 text-white drop-shadow-[0_0_30px_rgba(0,255,159,0.5)] font-mono px-4">
-                {nameText || nameReveal}
-              </h1>
-              <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xl sm:text-2xl md:text-3xl lg:text-4xl text-cyan-400 mb-4 drop-shadow-lg px-4">
+            <h1 className="fade-in text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-mono mb-2 px-4 text-gray-100">
+  Hemant Solanki
+</h1>
+
+
+  <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xl sm:text-2xl md:text-3xl lg:text-4xl text-cyan-400 mb-4 drop-shadow-lg px-4">
                 <Code2 size={24} className="md:w-8 md:h-8" aria-hidden="true" />
                 <span className="font-bold">Senior Data Analyst</span>
                 <GitBranch size={24} className="md:w-8 md:h-8" aria-hidden="true" />
               </div>
               <div className="text-base sm:text-xl md:text-2xl text-gray-200 mb-8 font-semibold px-4">
-                AI Developer • Data Analyst • Analytics Architect
+                AI Developer • Data Analyst 
               </div>
+                        <p className="fade-in mt-2 text-xs sm:text-sm text-green-400 font-mono px-4"
+            style={{ animationDelay: "0.3s" }}>
+            status: open to work
+          </p>
+
+
             </div>
             
             <div className="max-w-3xl mx-auto mb-8 p-4 md:p-6 lg:p-8 bg-black/60 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-2xl max-h-[400px] overflow-y-auto">
@@ -615,12 +614,9 @@ const CodePortfolio = () => {
                   <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-cyan-300">$ whoami</h3>
                   <p className="text-white leading-relaxed text-sm md:text-base lg:text-xl">
                     I'm a <span className="text-cyan-400 font-bold">Senior Data Analyst</span> and <span className="text-purple-400 font-bold">AI Developer</span> with 
-                    4.5 years of turning raw data into strategic gold. I don't just crunch numbers—I architect intelligence. From building AI-powered applications 
-                    that think and learn, to designing dashboards that tell compelling stories, I bridge the gap between data chaos and business clarity. 
-                    My superpower? Taking a SQL query, a Python script, and some caffeine, and transforming them into solutions that drive 
-                    real impact: <span className="text-green-400 font-bold">+25% engagement</span>, <span className="text-orange-400 font-bold">+60% automation</span>, 
-                    and <span className="text-cyan-400 font-bold">+30% data accuracy</span>. Currently exploring the bleeding edge where analytics meets artificial intelligence, 
-                    one algorithm at a time.
+                    4.5 years of turning raw data into clear, actionable insights. I build AI-powered applications, automate analytics workflows, and design dashboards that help teams make better decisions.
+                    Using Python and SQL, I focus on transforming complex data into practical, real-world AI solutions. Currently working at the intersection of data analytics and artificial intelligence.
+                   Open to work and excited to collaborate on impactful data and AI projects.
                   </p>
                 </div>
               </div>
@@ -805,7 +801,98 @@ const CodePortfolio = () => {
           </div>
         </section>
 
-        <section id="contact" className="relative py-16 md:py-24 lg:py-32 px-4 md:px-6">
+        <section id="testimonials" className="relative py-16 md:py-24 lg:py-32 px-4 md:px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 md:mb-12 text-center text-white drop-shadow-lg">
+              <span className="text-gray-400">{'<'}</span>
+              <span className="text-cyan-400">recommendations</span>
+              <span className="text-gray-400">{' />'}</span>
+            </h2>
+
+            <div className="mb-12 p-6 bg-black/50 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-xl max-w-4xl mx-auto">
+              <code className="text-white text-sm md:text-base block font-mono">
+                <span className="text-purple-400">class</span> <span className="text-yellow-300">LinkedInRecommendations</span>:<br />
+                &nbsp;&nbsp;<span className="text-cyan-300">source</span> = <span className="text-green-300">"verified_linkedin_profile"</span><br />
+                &nbsp;&nbsp;<span className="text-cyan-300">total_count</span> = <span className="text-orange-400">2</span><br />
+                &nbsp;&nbsp;<span className="text-cyan-300">verified</span> = <span className="text-orange-400">True</span>
+              </code>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+              {testimonials.map((testimonial, idx) => {
+                const colorClasses = getColorClasses(testimonial.color);
+                return (
+                  <div
+                    key={idx}
+                    className={`group p-6 md:p-8 bg-black/40 backdrop-blur border-2 ${colorClasses.border} rounded-lg ${colorClasses.hoverBorder} transition-all shadow-xl hover:shadow-2xl hover:scale-[1.02]`}
+                  >
+                    <div className="mb-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Quote className={colorClasses.impact} size={20} aria-hidden="true" />
+                            <h3 className={`text-xl md:text-2xl font-bold ${colorClasses.text}`}>
+                              {testimonial.name}
+                            </h3>
+                          </div>
+                          <p className="text-gray-300 font-semibold text-sm md:text-base">{testimonial.role}</p>
+                          <p className="text-gray-400 text-sm">{testimonial.company}</p>
+                        </div>
+                      </div>
+
+                      <div className={`mb-4 p-3 bg-black/30 rounded border-l-4 ${colorClasses.quote}`}>
+                        <code className="text-gray-400 text-xs md:text-sm font-mono">
+                          <span className="text-purple-400"># </span>{testimonial.relationship}
+                        </code>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {testimonial.traits.map((trait, i) => (
+                          <span
+                            key={i}
+                            className={`px-3 py-1 ${colorClasses.bg} border ${colorClasses.quote} rounded text-xs md:text-sm ${colorClasses.text} font-bold font-mono`}
+                          >
+                            {trait}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className={`p-4 bg-black/30 rounded-lg border-l-4 ${colorClasses.quote}`}>
+                      <p className="text-gray-100 leading-relaxed text-sm md:text-base italic">
+                        "{testimonial.quote}"
+                      </p>
+                    </div>
+
+                    <div className="mt-4 text-right">
+                      <code className={`${colorClasses.impact} font-bold text-xs md:text-sm font-mono`}>
+                        — {testimonial.date}
+                      </code>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-12 p-6 md:p-8 bg-black/50 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-xl text-center">
+              <code className="text-white text-sm md:text-base lg:text-lg block font-mono mb-4">
+                <span className="text-cyan-400">print</span>(<span className="text-green-300">"View all recommendations on LinkedIn"</span>)
+              </code>
+              <a 
+                href="https://www.linkedin.com/in/hemant-solanki-366462199/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-500/30 border-2 border-cyan-400 text-white rounded-lg hover:bg-cyan-500/40 transition-all font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              >
+                <Linkedin size={20} aria-hidden="true" />
+                View LinkedIn Profile
+                <ExternalLink size={16} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" className="relative py-16 md:py-24 lg:py-32 px-4 md:px-6 bg-black/20">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-8 text-white drop-shadow-lg">
               <span className="text-gray-400">//</span>{' '}
@@ -817,7 +904,7 @@ const CodePortfolio = () => {
                 <span className="text-cyan-400">function</span>{' '}
                 <span className="text-yellow-300">collaborate</span>() {'{'}<br />
                 &nbsp;&nbsp;<span className="text-purple-300">return</span>{' '}
-                <span className="text-green-300">"From data pipelines to GenAI apps — I build systems that think."</span>;<br />
+                <span className="text-green-300">"Data, AI, and automation — built for real-world impact. Open to work."</span>;<br />
                 {'}'}
               </code>
             </div>
@@ -885,12 +972,18 @@ const CodePortfolio = () => {
 
       <style jsx>{`
         @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%, 100% { 
+            background-position: 0% 50%;
+            background-size: 200% 200%;
+          }
+          50% { 
+            background-position: 100% 50%;
+            background-size: 200% 200%;
+          }
         }
         .animate-gradient {
           background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
+          animation: gradient 4s ease infinite;
         }
         @keyframes blink {
           0%, 50% { opacity: 1; }
@@ -898,6 +991,40 @@ const CodePortfolio = () => {
         }
         .animate-blink {
           animation: blink 1s infinite;
+        }
+        @keyframes glitch-1 {
+          0%, 100% {
+            transform: translate(0);
+            opacity: 0.3;
+          }
+          33% {
+            transform: translate(-2px, 2px);
+            opacity: 0.5;
+          }
+          66% {
+            transform: translate(2px, -2px);
+            opacity: 0.2;
+          }
+        }
+        @keyframes glitch-2 {
+          0%, 100% {
+            transform: translate(0);
+            opacity: 0.3;
+          }
+          33% {
+            transform: translate(2px, -2px);
+            opacity: 0.2;
+          }
+          66% {
+            transform: translate(-2px, 2px);
+            opacity: 0.5;
+          }
+        }
+        .animate-glitch-1 {
+          animation: glitch-1 3s infinite;
+        }
+        .animate-glitch-2 {
+          animation: glitch-2 3s infinite reverse;
         }
         .sr-only {
           position: absolute;
