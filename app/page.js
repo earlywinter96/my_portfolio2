@@ -15,6 +15,7 @@ const CodePortfolio = () => {
   const canvasRef = useRef(null);
   const fullText = ">>> import analytics, ai, automation";
   const nameReveal = "Hemant Solanki";
+  const [showFallback, setShowFallback] = useState(false);
   
   const terminalCode = [
     ">>> name = 'Hemant Solanki'",
@@ -99,6 +100,12 @@ const CodePortfolio = () => {
         clearInterval(glitch);
       }
     }, 80);
+    
+    // Fallback in case animation fails
+    setTimeout(() => {
+      setNameText(nameReveal);
+      setShowFallback(true);
+    }, 5000);
     
     return () => clearInterval(glitch);
   }, []);
@@ -381,7 +388,7 @@ const CodePortfolio = () => {
           </button>
 
           <a
-            href="https://drive.google.com/file/d/1PVD5m85SBka0tVvd0ilvzdS_zNmI69mg/view?usp=sharing"
+            href="https://drive.google.com/file/d/1WaJt8LlNR_RKCZrDGsXHhqCVWHy2I16s/view?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden md:flex items-center gap-2 px-4 py-2 bg-cyan-500/30 border border-cyan-400 text-white rounded-lg hover:bg-cyan-500/40 transition-all font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-400"
@@ -430,7 +437,7 @@ const CodePortfolio = () => {
                 <span className="animate-blink" aria-hidden="true">█</span>
               </div>
               <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-6 text-white drop-shadow-[0_0_30px_rgba(0,255,159,0.5)] font-mono px-4">
-                {nameText || "< ############### />"}
+                {nameText || nameReveal}
               </h1>
               <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xl sm:text-2xl md:text-3xl lg:text-4xl text-cyan-400 mb-4 drop-shadow-lg px-4">
                 <Code2 size={24} className="md:w-8 md:h-8" aria-hidden="true" />
