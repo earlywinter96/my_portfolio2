@@ -11,6 +11,8 @@ const CodePortfolio = () => {
   const [currentChar, setCurrentChar] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [whoamiText, setWhoamiText] = useState('');
+  const [whoamiComplete, setWhoamiComplete] = useState(false);
   const canvasRef = useRef(null);
   
   const terminalCode = [
@@ -30,6 +32,20 @@ const CodePortfolio = () => {
     "... }",
     ">>> print(\"Let's build something impactful...\")",
   ];
+
+  const whoamiFullText = "I'm a Senior Data Analyst and AI Developer with 4.5 years of turning raw data into clear, actionable insights. I build AI-powered applications, automate analytics workflows, and design dashboards that help teams make better decisions. Using Python and SQL, I focus on transforming complex data into practical, real-world AI solutions. Currently working at the intersection of data analytics and artificial intelligence. Open to work and excited to collaborate on impactful data and AI projects.";
+
+  // Whoami typing animation
+  useEffect(() => {
+    if (!whoamiComplete && whoamiText.length < whoamiFullText.length) {
+      const timeout = setTimeout(() => {
+        setWhoamiText(whoamiFullText.slice(0, whoamiText.length + 1));
+      }, 30);
+      return () => clearTimeout(timeout);
+    } else if (whoamiText.length === whoamiFullText.length) {
+      setWhoamiComplete(true);
+    }
+  }, [whoamiText, whoamiComplete]);
 
   useEffect(() => {
     if (currentLine < terminalCode.length) {
@@ -147,7 +163,8 @@ const CodePortfolio = () => {
       tech: ["Python", "Gemini API", "Flask", "PostgreSQL", "NLP"],
       link: "https://ai-resume-job-analyzer.onrender.com/",
       github: "https://github.com/earlywinter96/ai-resume-job-analyzer",
-      icon: <Brain className="text-cyan-400" size={32} aria-hidden="true" />
+      icon: <Brain className="text-cyan-400" size={32} aria-hidden="true" />,
+      bgImage: "/resume-analyzer.png"
     },
     {
       title: "NIA Voice Translator",
@@ -155,7 +172,8 @@ const CodePortfolio = () => {
       tech: ["Python", "Gemini API", "Google Cloud TTS", "SpeechRecognition"],
       link: "https://niaa-voice-translator.onrender.com/",
       github: "https://github.com/earlywinter96/niaa-voice-translator-",
-      icon: <Globe className="text-purple-400" size={32} aria-hidden="true" />
+      icon: <Globe className="text-purple-400" size={32} aria-hidden="true" />,
+      bgImage: "/niaa-translator.png"
     },
     {
       title: "StackIt 2.0 - AI Q&A Platform",
@@ -163,14 +181,16 @@ const CodePortfolio = () => {
       tech: ["Flask", "Gemini Pro", "SQLite", "REST API"],
       link: "https://stackit2-0.onrender.com/",
       github: "https://github.com/earlywinter96/stackit2.0",
-      icon: <Code2 className="text-green-400" size={32} aria-hidden="true" />
+      icon: <Code2 className="text-green-400" size={32} aria-hidden="true" />,
+      bgImage: "/stackit.png"
     },
     {
       title: "NIA - AI Voice Assistant",
       description: "Voice-controlled AI agent using Gemini API with speech recognition, natural language processing, and automated task execution.",
       tech: ["Python", "Gemini API", "SpeechRecognition", "pyttsx3"],
       github: "https://github.com/earlywinter96/AI-Agent-NIA-",
-      icon: <Cpu className="text-yellow-400" size={32} aria-hidden="true" />
+      icon: <Cpu className="text-yellow-400" size={32} aria-hidden="true" />,
+      bgImage: "/nia.png"
     }
   ];
 
@@ -448,7 +468,7 @@ const CodePortfolio = () => {
 
             </div>
             
-            <div className="max-w-3xl mx-auto mb-8 p-4 md:p-6 lg:p-8 bg-black/60 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-2xl max-h-[400px] overflow-y-auto">
+            <div className="max-w-3xl mx-auto mb-8 p-4 md:p-6 lg:p-8 bg-black/60 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-2xl max-h-[400px] overflow-y-auto terminal-scroll">
               <code className="text-white text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed block font-mono">
                 {codeLines.length === 0 ? (
                   <div className="text-gray-400">Loading terminal...</div>
@@ -607,16 +627,16 @@ const CodePortfolio = () => {
               </div>
             </div>
 
-            <div className="mt-8 md:mt-12 p-6 md:p-8 lg:p-10 bg-black/50 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-2xl">
+            <div className="mt-8 md:mt-12 p-6 md:p-8 lg:p-10 bg-black/50 backdrop-blur border-2 border-cyan-500/40 rounded-lg shadow-2xl overflow-hidden">
               <div className="flex items-start gap-3 md:gap-4">
-                <Terminal className="text-cyan-400 mt-1 flex-shrink-0 w-6 h-6 md:w-9 md:h-9" aria-hidden="true" />
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-cyan-300">$ whoami</h3>
+                <Terminal className="text-cyan-400 mt-1 flex-shrink-0 w-6 h-6 md:w-9 md:h-9 animate-pulse-glow" aria-hidden="true" />
+                <div className="flex-1">
+                  <h3 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-cyan-300 whoami-title">$ whoami</h3>
                   <p className="text-white leading-relaxed text-sm md:text-base lg:text-xl">
-                    I'm a <span className="text-cyan-400 font-bold">Senior Data Analyst</span> and <span className="text-purple-400 font-bold">AI Developer</span> with 
-                    4.5 years of turning raw data into clear, actionable insights. I build AI-powered applications, automate analytics workflows, and design dashboards that help teams make better decisions.
-                    Using Python and SQL, I focus on transforming complex data into practical, real-world AI solutions. Currently working at the intersection of data analytics and artificial intelligence.
-                   Open to work and excited to collaborate on impactful data and AI projects.
+                    <span className="whoami-text">
+                      {whoamiText}
+                      {!whoamiComplete && <span className="animate-blink text-cyan-400">█</span>}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -675,53 +695,65 @@ const CodePortfolio = () => {
               {projects.map((project, idx) => (
                 <div
                   key={idx}
-                  className="group relative p-6 md:p-8 bg-black/40 backdrop-blur border-2 border-cyan-500/40 rounded-lg hover:border-cyan-400 transition-all hover:scale-[1.02] shadow-xl"
+                  className="group relative p-6 md:p-8 bg-black/40 backdrop-blur border-2 border-cyan-500/40 rounded-lg hover:border-cyan-400 transition-all hover:scale-[1.02] shadow-xl overflow-hidden"
                 >
-                  <div className="mb-4 md:mb-6">
-                    {project.icon}
-                  </div>
+                  {/* Background Image */}
+                  {project.bgImage && (
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center opacity-10 group-hover:opacity-20 transition-opacity duration-300"
+                      style={{ backgroundImage: `url('${project.bgImage}')` }}
+                      aria-hidden="true"
+                    />
+                  )}
                   
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-cyan-300">
-                    {project.title}
-                  </h3>
-                  <p className="text-gray-100 mb-4 md:mb-6 leading-relaxed text-sm md:text-base lg:text-lg">
-                    {project.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-                    {project.tech.map((tech, i) => (
-                      <span
-                        key={i}
-                        className="px-3 md:px-4 py-1 md:py-2 bg-cyan-500/20 border-2 border-cyan-500/50 rounded text-xs md:text-sm lg:text-base text-cyan-300 font-bold font-mono"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
+                  {/* Content */}
+                  <div className="relative z-10">
+                    <div className="mb-4 md:mb-6">
+                      {project.icon}
+                    </div>
+                    
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 md:mb-4 text-cyan-300">
+                      {project.title}
+                    </h3>
+                    <p className="text-gray-100 mb-4 md:mb-6 leading-relaxed text-sm md:text-base lg:text-lg">
+                      {project.description}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+                      {project.tech.map((tech, i) => (
+                        <span
+                          key={i}
+                          className="px-3 md:px-4 py-1 md:py-2 bg-cyan-500/20 border-2 border-cyan-500/50 rounded text-xs md:text-sm lg:text-base text-cyan-300 font-bold font-mono"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
 
-                  <div className="flex flex-wrap gap-3 md:gap-4">
-                    {project.link && (
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 md:px-5 py-2 md:py-3 bg-cyan-500/30 border-2 border-cyan-400 text-white rounded-lg hover:bg-cyan-500/40 transition-all font-bold text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                      >
-                        <ExternalLink size={16} aria-hidden="true" />
-                        Demo
-                      </a>
-                    )}
-                    {project.github && (
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 md:px-5 py-2 md:py-3 bg-green-500/30 border-2 border-green-400 text-white rounded-lg hover:bg-green-500/40 transition-all font-bold text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-green-400"
-                      >
-                        <Github size={16} aria-hidden="true" />
-                        Code
-                      </a>
-                    )}
+                    <div className="flex flex-wrap gap-3 md:gap-4">
+                      {project.link && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 md:px-5 py-2 md:py-3 bg-cyan-500/30 border-2 border-cyan-400 text-white rounded-lg hover:bg-cyan-500/40 transition-all font-bold text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                        >
+                          <ExternalLink size={16} aria-hidden="true" />
+                          Demo
+                        </a>
+                      )}
+                      {project.github && (
+                        <a
+                          href={project.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 md:px-5 py-2 md:py-3 bg-green-500/30 border-2 border-green-400 text-white rounded-lg hover:bg-green-500/40 transition-all font-bold text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-green-400"
+                        >
+                          <Github size={16} aria-hidden="true" />
+                          Code
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1026,6 +1058,39 @@ const CodePortfolio = () => {
         .animate-glitch-2 {
           animation: glitch-2 3s infinite reverse;
         }
+        
+        /* Whoami animations */
+        @keyframes scanline {
+          0% {
+            transform: translateY(-100%);
+          }
+          100% {
+            transform: translateY(100%);
+          }
+        }
+        
+        @keyframes textGlow {
+          0%, 100% {
+            text-shadow: 0 0 10px rgba(0, 255, 159, 0.5),
+                         0 0 20px rgba(0, 255, 159, 0.3),
+                         0 0 30px rgba(0, 255, 159, 0.2);
+          }
+          50% {
+            text-shadow: 0 0 20px rgba(0, 255, 159, 0.8),
+                         0 0 30px rgba(0, 255, 159, 0.6),
+                         0 0 40px rgba(0, 255, 159, 0.4);
+          }
+        }
+        
+        .whoami-title {
+          animation: textGlow 2s ease-in-out infinite;
+        }
+        
+        .whoami-text {
+          position: relative;
+          display: inline-block;
+        }
+        
         .sr-only {
           position: absolute;
           width: 1px;

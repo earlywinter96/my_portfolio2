@@ -28,9 +28,14 @@ export const metadata = {
     images: ['/portfolio-preview.png'],
   },
   icons: {
-    icon: '/favicon.png',
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
     apple: '/apple-touch-icon.png',
   },
+}
+
+export const viewport = {
+  themeColor: '#0a0e27',
 }
 
 export default function RootLayout({ children }) {
@@ -38,6 +43,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body>{children}</body>
     </html>

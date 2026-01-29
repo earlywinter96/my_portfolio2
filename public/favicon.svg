@@ -1,0 +1,40 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e27"/>
+      <stop offset="100%" style="stop-color:#1a1e3f"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00ff9f"/>
+      <stop offset="50%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#a855f7"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background with gradient -->
+  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
+  
+  <!-- Subtle grid effect -->
+  <g opacity="0.1">
+    <line x1="0" y1="8" x2="32" y2="8" stroke="#00ff9f" stroke-width="0.5"/>
+    <line x1="0" y1="16" x2="32" y2="16" stroke="#00ff9f" stroke-width="0.5"/>
+    <line x1="0" y1="24" x2="32" y2="24" stroke="#00ff9f" stroke-width="0.5"/>
+    <line x1="8" y1="0" x2="8" y2="32" stroke="#00ff9f" stroke-width="0.5"/>
+    <line x1="16" y1="0" x2="16" y2="32" stroke="#00ff9f" stroke-width="0.5"/>
+    <line x1="24" y1="0" x2="24" y2="32" stroke="#00ff9f" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Terminal prompt: $ -->
+  <text x="5" y="13" font-family="monospace" font-size="10" font-weight="bold" fill="#00ff9f">$</text>
+  
+  <!-- whoami text -->
+  <text x="5" y="23" font-family="monospace" font-size="6" font-weight="bold" fill="url(#glow)">whoami</text>
+  
+  <!-- Blinking cursor -->
+  <rect x="25" y="18" width="2" height="6" fill="#00ff9f">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/>
+  </rect>
+  
+  <!-- Glow effect around edges -->
+  <rect width="32" height="32" rx="6" fill="none" stroke="url(#glow)" stroke-width="0.5" opacity="0.5"/>
+</svg>
