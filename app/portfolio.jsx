@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch, Menu, X, Quote, ChevronRight, Play, Circle } from 'lucide-react';
+import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch, Menu, X, Quote, ChevronRight, Play, Circle, MessageCircle, Send } from 'lucide-react';
 
 const InteractivePortfolio = () => {
   const [activeSection, setActiveSection] = useState('hero');
@@ -13,9 +13,19 @@ const InteractivePortfolio = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [matrixRain, setMatrixRain] = useState([]);
+  const [botOpen, setBotOpen] = useState(false);
+  const [botInput, setBotInput] = useState('');
+  const [botThinking, setBotThinking] = useState(false);
+  const [botMessages, setBotMessages] = useState([
+    {
+      role: 'assistant',
+      text: 'Hi, I am Hemant.ai. Ask me about Hemant, Reliance AI & Data, projects, skills, or LipiTranslate.in.'
+    }
+  ]);
   const canvasRef = useRef(null);
   const hexCanvasRef = useRef(null);
   const terminalRef = useRef(null);
+  const botRef = useRef(null);
 
   const languages = {
     python: {
@@ -31,7 +41,7 @@ const InteractivePortfolio = () => {
         { text: ">>> hemant = Developer(", delay: 600 },
         { text: "...     name='Hemant Solanki',", delay: 400 },
         { text: "...     role='Asst. Manager – AI & Data | Reliance Group',", delay: 400 },
-        { text: "...     experience_years=5.5,", delay: 400 },
+        { text: "...     experience_years='6+',", delay: 400 },
         { text: "...     location='Mumbai, India',", delay: 400 },
         { text: "...     status='Open to Work'", delay: 400 },
         { text: "... )", delay: 600 },
@@ -41,11 +51,13 @@ const InteractivePortfolio = () => {
         { text: "...     'ai': ['Agentic AI', 'OpenClaw', 'Claude', 'Gemini API', 'NLP'],", delay: 400 },
         { text: "...     'viz': ['Tableau', 'Power BI', 'Matplotlib'],", delay: 400 },
         { text: "...     'automation': ['Flask', 'REST APIs', 'ETL', 'LLM Pipelines']", delay: 400 },
+        { text: "...     'startup': ['LipiTranslate.in', 'Indic AI', 'PDF Translation']", delay: 400 },
         { text: "... }", delay: 600 },
         { text: ">>> ", delay: 200 },
         { text: ">>> hemant.showcase_impact()", delay: 800 },
         { text: "🚀 Building Agentic AI solutions at enterprise scale", delay: 1000 },
         { text: "✨ Deploying intelligent agents for real-world business use cases", delay: 1000 },
+        { text: "🌐 Building LipiTranslate.in for Indic PDF translation", delay: 1000 },
         { text: "💡 Turning data chaos into strategic clarity with AI", delay: 1000 },
         { text: ">>> ", delay: 200 },
         { text: ">>> print('Ready to collaborate on impactful projects!')", delay: 1000 },
@@ -109,7 +121,7 @@ const InteractivePortfolio = () => {
     setScrollY(scrollPosition);
     setIsScrolled(scrollPosition > 50);
     
-    const sections = ['hero', 'about', 'experience', 'projects', 'skills', 'testimonials', 'contact'];
+    const sections = ['hero', 'about', 'experience', 'projects', 'startup', 'skills', 'testimonials', 'contact'];
     const current = sections.find(section => {
       const element = document.getElementById(section);
       if (element) {
@@ -120,6 +132,71 @@ const InteractivePortfolio = () => {
     });
     if (current) setActiveSection(current);
   }, []);
+
+  useEffect(() => {
+    if (botRef.current) {
+      botRef.current.scrollTop = botRef.current.scrollHeight;
+    }
+  }, [botMessages, botOpen]);
+
+  const getBotAnswer = (question) => {
+    const lower = question.toLowerCase();
+    if (lower.includes('lipi') || lower.includes('translate') || lower.includes('startup')) {
+      return 'LipiTranslate.in is Hemant Solanki’s founder-led Indic AI product. It focuses on translating full PDFs into Indian languages, helping students, teams, and knowledge workers understand documents without depending only on English. The roadmap is to grow from PDF translation into broader document intelligence.';
+    }
+    if (lower.includes('reliance') || lower.includes('job') || lower.includes('role')) {
+      return 'Hemant joined Reliance Group in Feb 2026 as Assistant Manager - AI & Data. His current focus is applied AI systems, agentic workflows, LLM pipelines, analytics automation, and enterprise data use cases.';
+    }
+    if (lower.includes('project')) {
+      return 'Key projects include LipiTranslate.in, AI Resume & Job Match Analyzer, NIA Voice Translator, StackIt 2.0, and NIA AI Voice Assistant. Together they show applied AI, NLP, document workflows, voice interfaces, and production-style web applications.';
+    }
+    if (lower.includes('skill') || lower.includes('tech')) {
+      return 'Hemant’s core skills include Python, SQL, R, Tableau, Power BI, Flask, REST APIs, Gemini API, Claude, OpenClaw, LLM pipelines, workflow automation, and data quality systems.';
+    }
+    if (lower.includes('contact') || lower.includes('email')) {
+      return 'You can reach Hemant at hemantsolanki333@gmail.com, connect on LinkedIn, or explore his GitHub at github.com/earlywinter96.';
+    }
+    return 'Hemant Solanki is an AI and data professional based in Mumbai. He works as Assistant Manager - AI & Data at Reliance Group, joined in Feb 2026, and builds practical AI products including LipiTranslate.in for Indic PDF translation.';
+  };
+
+  const getLiveBotAnswer = async (message) => {
+    const response = await fetch('/api/portfolio-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message })
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(payload.error || 'AI request failed.');
+    return payload.answer;
+  };
+
+  const sendBotMessage = async (message = botInput) => {
+    const clean = message.trim();
+    if (!clean || botThinking) return;
+    setBotOpen(true);
+    setBotInput('');
+    setBotThinking(true);
+    setBotMessages(prev => [
+      ...prev,
+      { role: 'user', text: clean },
+      { role: 'assistant', text: 'Thinking with live portfolio AI...', pending: true }
+    ]);
+
+    try {
+      const answer = await getLiveBotAnswer(clean);
+      setBotMessages(prev => [
+        ...prev.slice(0, -1),
+        { role: 'assistant', text: answer || getBotAnswer(clean) }
+      ]);
+    } catch (error) {
+      setBotMessages(prev => [
+        ...prev.slice(0, -1),
+        { role: 'assistant', text: getBotAnswer(clean) }
+      ]);
+    } finally {
+      setBotThinking(false);
+    }
+  };
 
   useEffect(() => {
     let ticking = false;
@@ -238,6 +315,14 @@ const InteractivePortfolio = () => {
 
   const projects = [
     {
+      title: "LipiTranslate.in - Indic AI PDF Translator",
+      description: "Founder-led AI product that translates full PDFs into Indian languages, designed for students, teams, and knowledge workers who need document access beyond English.",
+      tech: ["Indic AI", "PDF Translation", "Sarvam AI", "Document Intelligence"],
+      link: "https://lipitranslate.in/",
+      github: "https://github.com/earlywinter96",
+      icon: <Globe className="text-yellow-400" size={32} />,
+    },
+    {
       title: "AI Resume & Job Match Analyzer",
       description: "ATS-powered system analyzing resumes with AI-driven insights, skill gap detection, and career recommendations using advanced NLP.",
       tech: ["Python", "Gemini API", "Flask", "PostgreSQL", "NLP"],
@@ -270,7 +355,7 @@ const InteractivePortfolio = () => {
     }
   ];
 
-  const navItems = ['About', 'Experience', 'Projects', 'Skills', 'Testimonials', 'Contact'];
+  const navItems = ['About', 'Experience', 'Projects', 'Startup', 'Skills', 'Testimonials', 'Contact'];
   const langColor = getLanguageColor(languages[currentLanguage].color);
 
   return (
@@ -285,7 +370,7 @@ const InteractivePortfolio = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-4xl">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-6xl">
         <div className={`relative transition-all duration-500 ${isScrolled ? 'glass-nav-scrolled' : 'glass-nav'}`}>
           <div className="relative overflow-hidden rounded-2xl border border-cyan-400/20 shadow-2xl backdrop-blur-xl bg-[#020817]/60">
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none" />
@@ -298,10 +383,10 @@ const InteractivePortfolio = () => {
                     <span className="text-gray-400/80 text-sm">@dev</span>
                   </div>
                 </a>
-                <div className="hidden md:flex items-center gap-1">
+                <div className="hidden lg:flex items-center gap-1">
                   {navItems.map(item => (
                     <a key={item} href={`#${item.toLowerCase()}`}
-                      className={`px-3 lg:px-4 py-2 rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ${
+                      className={`px-2.5 lg:px-3 py-2 rounded-lg text-xs lg:text-sm font-medium transition-all duration-300 ${
                         activeSection === item.toLowerCase()
                           ? 'text-cyan-400 bg-cyan-500/10 shadow-lg shadow-cyan-500/20 border border-cyan-500/30'
                           : 'text-gray-300/90 hover:text-cyan-300 hover:bg-white/5'
@@ -312,11 +397,11 @@ const InteractivePortfolio = () => {
                 <div className="flex items-center gap-2">
                   <a href="https://drive.google.com/file/d/1PVD5m85SBka0tVvd0ilvzdS_zNmI69mg/view?usp=sharing"
                     target="_blank" rel="noopener noreferrer"
-                    className="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-400/30 text-cyan-300 rounded-lg hover:from-cyan-500/30 hover:to-purple-500/30 transition-all text-xs lg:text-sm font-semibold">
-                    <Download size={14} /> Resume
+                    className="hidden lg:flex items-center gap-2 whitespace-nowrap px-3 lg:px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-400/30 text-cyan-300 rounded-lg hover:from-cyan-500/30 hover:to-purple-500/30 transition-all text-xs lg:text-sm font-semibold">
+                    <Download size={14} /> Download Resume
                   </a>
                   <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="md:hidden p-2 text-cyan-400 hover:bg-white/10 rounded-lg transition-all">
+                    className="lg:hidden p-2 text-cyan-400 hover:bg-white/10 rounded-lg transition-all">
                     {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
                   </button>
                 </div>
@@ -324,7 +409,7 @@ const InteractivePortfolio = () => {
             </div>
           </div>
           {mobileMenuOpen && (
-            <div className="md:hidden mt-2 rounded-2xl border border-cyan-400/20 shadow-2xl overflow-hidden backdrop-blur-xl bg-[#020817]/60 animate-slideDown">
+            <div className="lg:hidden mt-2 rounded-2xl border border-cyan-400/20 shadow-2xl overflow-hidden backdrop-blur-xl bg-[#020817]/60 animate-slideDown">
               <div className="flex flex-col py-3 px-3 space-y-1">
                 {navItems.map(item => (
                   <a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)}
@@ -335,6 +420,11 @@ const InteractivePortfolio = () => {
                     }`}
                   >{item}</a>
                 ))}
+                <a href="https://drive.google.com/file/d/1PVD5m85SBka0tVvd0ilvzdS_zNmI69mg/view?usp=sharing"
+                  target="_blank" rel="noopener noreferrer"
+                  className="mt-2 flex items-center gap-2 px-4 py-3 rounded-lg bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 transition-all text-sm font-semibold">
+                  <Download size={16} /> Download Resume
+                </a>
               </div>
             </div>
           )}
@@ -507,8 +597,9 @@ const InteractivePortfolio = () => {
                 <div>
                   <h3 className="text-3xl font-bold mb-4 text-cyan-300">$ whoami</h3>
                   <p className="text-white leading-relaxed text-lg">
-                    I'm an Assistant Manager – AI & Data at Reliance Group with 5.5 years of experience turning raw data into clear, actionable insights.
+                    I'm an Assistant Manager – AI & Data at Reliance Group with 6+ years of experience turning raw data into clear, actionable insights.
                     I build and deploy Agentic AI solutions, develop intelligent agents using OpenClaw and Claude for workflow automation, and integrate Generative AI into analytics pipelines.
+                    I am also building LipiTranslate.in, an Indic AI product focused on full PDF translation into Indian languages.
                     Currently working at the intersection of enterprise data and cutting-edge AI — designing scalable systems that reduce manual effort and drive real business impact.
                     Open to work and excited to collaborate on impactful data and AI projects.
                   </p>
@@ -538,7 +629,7 @@ const InteractivePortfolio = () => {
                     <p className="text-2xl text-white font-bold">Reliance Group</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-yellow-400 font-bold font-mono text-lg">Feb 2025 - Present</p>
+                    <p className="text-yellow-400 font-bold font-mono text-lg">Feb 2026 - Present</p>
                     <p className="text-gray-300">Mumbai</p>
                   </div>
                 </div>
@@ -574,7 +665,7 @@ const InteractivePortfolio = () => {
                     <p className="text-2xl text-white font-bold">Freelance Developer / Data Analyst</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-cyan-400 font-bold font-mono text-lg">Jan 2025 - Feb 2025</p>
+                    <p className="text-cyan-400 font-bold font-mono text-lg">Jan 2025 - Jan 2026</p>
                     <p className="text-gray-300">Mumbai</p>
                   </div>
                 </div>
@@ -691,6 +782,56 @@ const InteractivePortfolio = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Startup */}
+        <section id="startup" className="relative py-24 px-4 md:px-6">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-5xl md:text-6xl font-bold mb-12 text-center">
+              <span className="text-gray-400">//</span> <span className="text-cyan-400">Startup</span>
+            </h2>
+            <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-stretch">
+              <div className="p-8 md:p-10 bg-[#0f172a]/70 backdrop-blur-xl border border-yellow-500/30 rounded-xl shadow-2xl">
+                <div className="flex items-center gap-3 mb-5">
+                  <Globe className="text-yellow-400" size={28} />
+                  <p className="text-yellow-400 font-mono font-bold">founder_build.launch()</p>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-bold text-yellow-300 mb-5">LipiTranslate.in</h3>
+                <p className="text-gray-100 leading-relaxed text-lg mb-6">
+                  LipiTranslate.in is Hemant's founder-led Indic AI product for translating full PDFs into Indian languages.
+                  It is built for students, professionals, and teams who need easier access to knowledge locked inside English documents.
+                </p>
+                <p className="text-gray-200 leading-relaxed mb-8">
+                  The product direction starts with accurate PDF translation and moves toward a broader document intelligence layer:
+                  upload a document, understand it in your preferred Indian language, and work with the content faster.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <a href="https://lipitranslate.in/" target="_blank" rel="noopener noreferrer"
+                     className="inline-flex items-center gap-2 px-5 py-3 bg-yellow-500/25 border border-yellow-400 text-white rounded-lg hover:bg-yellow-500/35 transition-all font-bold">
+                    <ExternalLink size={16} /> Visit LipiTranslate.in
+                  </a>
+                  <button onClick={() => sendBotMessage('Explain LipiTranslate.in as a startup pitch.')}
+                    className="inline-flex items-center gap-2 px-5 py-3 bg-cyan-500/25 border border-cyan-400 text-white rounded-lg hover:bg-cyan-500/35 transition-all font-bold">
+                    <MessageCircle size={16} /> Ask Bot
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-4">
+                {[
+                  ['Problem', 'Important PDFs are often hard to use when readers need Indian language access.'],
+                  ['Product', 'Translate complete PDFs while preserving the document workflow for real users.'],
+                  ['AI Layer', 'Indic language translation, document parsing, and future intelligence features.'],
+                  ['Users', 'Students, teams, researchers, and knowledge workers across India.']
+                ].map(([title, detail], idx) => (
+                  <div key={idx} className="p-5 bg-[#0f172a]/60 backdrop-blur-xl border border-cyan-500/30 rounded-xl shadow-xl">
+                    <p className="text-cyan-400 font-mono font-bold mb-2">{title}</p>
+                    <p className="text-gray-100 leading-relaxed">{detail}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -844,6 +985,71 @@ const InteractivePortfolio = () => {
           </div>
         </section>
       </main>
+
+      {/* Portfolio Bot */}
+      <button
+        onClick={() => setBotOpen(true)}
+        className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-5 py-4 bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 rounded-2xl backdrop-blur-xl shadow-2xl hover:bg-cyan-500/30 transition-all font-bold ${botOpen ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100'}`}
+        aria-label="Open Hemant AI bot"
+      >
+        <MessageCircle size={22} />
+        <span className="hidden sm:inline">Ask Hemant.ai</span>
+      </button>
+
+      {botOpen && (
+        <div className="fixed bottom-5 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-md overflow-hidden rounded-2xl border border-cyan-400/40 bg-[#020817]/95 backdrop-blur-2xl shadow-2xl">
+          <div className="flex items-center justify-between gap-3 p-4 border-b border-cyan-500/30 bg-cyan-500/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center">
+                <MessageCircle className="text-cyan-300" size={20} />
+              </div>
+              <div>
+                <p className="text-cyan-300 font-bold">Hemant.ai</p>
+                <p className="text-xs text-gray-400">Portfolio bot</p>
+              </div>
+            </div>
+            <button onClick={() => setBotOpen(false)} className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all" aria-label="Close Hemant AI bot">
+              <X size={18} />
+            </button>
+          </div>
+
+          <div ref={botRef} className="h-80 overflow-y-auto terminal-scroll p-4 space-y-3">
+            {botMessages.map((message, idx) => (
+              <div key={idx} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed border ${
+                  message.role === 'user'
+                    ? 'bg-cyan-500/25 border-cyan-400/40 text-white'
+                    : `bg-[#0f172a]/80 border-white/10 text-gray-100 ${message.pending ? 'animate-pulse' : ''}`
+                }`}>
+                  {message.text}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 px-4 pb-3">
+            {['Tell me about Reliance', 'Pitch LipiTranslate', 'Best projects', 'Core skills'].map((prompt) => (
+              <button key={prompt} onClick={() => sendBotMessage(prompt)} disabled={botThinking}
+                className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-200 hover:bg-cyan-500/15 hover:border-cyan-400/40 transition-all">
+                {prompt}
+              </button>
+            ))}
+          </div>
+
+          <form onSubmit={(event) => { event.preventDefault(); sendBotMessage(); }} className="flex gap-2 p-4 border-t border-cyan-500/30">
+            <input
+              value={botInput}
+              onChange={(event) => setBotInput(event.target.value)}
+              placeholder="Ask about Hemant..."
+              disabled={botThinking}
+              className="min-w-0 flex-1 rounded-xl bg-black/30 border border-cyan-500/30 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
+            />
+            <button type="submit" disabled={botThinking} className="px-4 py-3 rounded-xl bg-cyan-500/25 border border-cyan-400 text-white hover:bg-cyan-500/35 transition-all disabled:opacity-60" aria-label="Send bot message">
+              {botThinking ? <Circle size={18} className="animate-pulse fill-current" /> : <Send size={18} />}
+            </button>
+          </form>
+        </div>
+      )}
 
       <footer className="relative py-12 px-4 md:px-6 border-t border-cyan-500/30 backdrop-blur-xl bg-[#0f172a]/40">
         <div className="max-w-6xl mx-auto text-center">

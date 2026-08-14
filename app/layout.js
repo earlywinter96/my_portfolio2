@@ -1,13 +1,13 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Hemant Solanki - Senior Data Analyst & AI Developer',
-  description: 'Senior Data Analyst & AI Developer with 4.5 years experience specializing in Python, SQL, R, Machine Learning, and Business Intelligence. Building AI-powered solutions that drive impact.',
-  keywords: 'Data Analyst, Python, R, SQL, AI, Machine Learning, Gemini API, Business Intelligence, Portfolio, Developer, Hemant Solanki',
+  title: 'Hemant Solanki - Assistant Manager, AI & Data',
+  description: 'Assistant Manager, AI & Data at Reliance Group with 6+ years across Python, SQL, R, analytics automation, AI products, and LipiTranslate.in.',
+  keywords: 'AI Data, Data Analyst, Python, R, SQL, Reliance Group, LipiTranslate, Gemini API, Business Intelligence, Portfolio, Hemant Solanki',
   author: 'Hemant Solanki',
   openGraph: {
-    title: 'Hemant Solanki - Senior Data Analyst & AI Developer',
-    description: 'Senior Data Analyst & AI Developer specializing in Python, SQL, Machine Learning, and Business Intelligence. Building AI-powered solutions that drive impact.',
+    title: 'Hemant Solanki - Assistant Manager, AI & Data',
+    description: 'AI and data portfolio covering Reliance Group, applied AI projects, analytics automation, and LipiTranslate.in.',
     url: 'https://my-portfolio2-peach-six.vercel.app/',
     siteName: 'Hemant Solanki Portfolio',
     images: [
@@ -15,7 +15,7 @@ export const metadata = {
         url: '/portfolio-preview.png',
         width: 1200,
         height: 630,
-        alt: 'Hemant Solanki - Senior Data Analyst & AI Developer',
+        alt: 'Hemant Solanki - Assistant Manager, AI & Data',
       }
     ],
     locale: 'en_US',
@@ -23,8 +23,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hemant Solanki - Senior Data Analyst & AI Developer',
-    description: 'Senior Data Analyst & AI Developer specializing in Python, SQL, Machine Learning, and Business Intelligence.',
+    title: 'Hemant Solanki - Assistant Manager, AI & Data',
+    description: 'AI and data portfolio covering Reliance Group, applied AI projects, analytics automation, and LipiTranslate.in.',
     images: ['/portfolio-preview.png'],
   },
   icons: {
