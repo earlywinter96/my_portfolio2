@@ -8,6 +8,8 @@ He has 6+ years of experience across data analytics, business intelligence, auto
 He is building LipiTranslate.in, a founder-led Indic AI product focused on translating full PDFs into Indian languages. LipiTranslate.in is for students, teams, researchers, and knowledge workers who need better access to documents beyond English. The product direction starts with PDF translation and can grow into document intelligence.
 Projects: LipiTranslate.in, AI Resume & Job Match Analyzer, NIA Voice Translator, StackIt 2.0, and NIA AI Voice Assistant.
 Impact proof: 15+ production Tableau dashboards, 200+ daily stakeholders, 60% reporting time saved through automation, and 30% data accuracy improvement through validation and quality checks.
+Why hire Hemant: he combines enterprise analytics delivery, AI automation, LLM workflow building, stakeholder-facing dashboards, and founder-style product ownership. He can connect business problems to practical AI and data systems.
+This portfolio includes Hemant.ai, a live Groq-powered portfolio agent that answers recruiter and collaborator questions from Hemant's verified portfolio facts.
 Contact: hemantsolanki333@gmail.com, phone +91 86988 34490, LinkedIn https://www.linkedin.com/in/hemant-solanki-366462199/, GitHub https://github.com/earlywinter96.
 `;
 
@@ -38,7 +40,7 @@ export async function POST(request) {
           {
             role: 'system',
             content:
-              'You are Hemant.ai, a concise portfolio chatbot. Answer from the provided facts only. Be professional, recruiter-friendly, specific, and useful. Do not claim private or unverifiable details.'
+              'You are Hemant.ai, a concise portfolio chatbot. Answer from the provided facts only. Be professional, recruiter-friendly, specific, and useful. For hiring questions, give clear role-fit reasons. Do not claim private or unverifiable details.'
           },
           {
             role: 'user',

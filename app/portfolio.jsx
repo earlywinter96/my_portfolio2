@@ -1,7 +1,40 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch, Menu, X, Quote, ChevronRight, Play, Circle, MessageCircle, Send } from 'lucide-react';
+import { Mail, Linkedin, Github, ExternalLink, Database, Code2, Terminal, Brain, Cpu, Zap, Download, Globe, TrendingUp, GitBranch, Menu, X, Quote, ChevronRight, Play, Circle, MessageCircle, Send, Volume2 } from 'lucide-react';
+
+const getPortfolioNavigationTarget = (message) => {
+  const lower = message.toLowerCase();
+
+  if (lower.includes('lipi') || lower.includes('startup') || lower.includes('founder') || lower.includes('translate')) {
+    return { sectionId: 'startup', label: 'LipiTranslate startup' };
+  }
+
+  if (
+    lower.includes('project') ||
+    lower.includes('resume analyzer') ||
+    lower.includes('nia') ||
+    lower.includes('stackit') ||
+    lower.includes('voice translator') ||
+    lower.includes('product example')
+  ) {
+    return { sectionId: 'projects', label: 'Projects' };
+  }
+
+  if (lower.includes('reliance') || lower.includes('experience') || lower.includes('role') || lower.includes('job')) {
+    return { sectionId: 'experience', label: 'Reliance experience' };
+  }
+
+  if (lower.includes('skill') || lower.includes('tech') || lower.includes('python') || lower.includes('sql')) {
+    return { sectionId: 'skills', label: 'Skills' };
+  }
+
+  if (lower.includes('contact') || lower.includes('email') || lower.includes('phone')) {
+    return { sectionId: 'contact', label: 'Contact' };
+  }
+
+  return null;
+};
 
 const InteractivePortfolio = () => {
   const [activeSection, setActiveSection] = useState('hero');
@@ -16,6 +49,14 @@ const InteractivePortfolio = () => {
   const [botOpen, setBotOpen] = useState(false);
   const [botInput, setBotInput] = useState('');
   const [botThinking, setBotThinking] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState('');
+  const [voicePanelOpen, setVoicePanelOpen] = useState(false);
+  const [voicePlaying, setVoicePlaying] = useState(false);
+  const [introComplete, setIntroComplete] = useState(false);
+  const [voiceRepliesEnabled, setVoiceRepliesEnabled] = useState(true);
+  const [voiceStatus, setVoiceStatus] = useState('idle');
+  const [voiceTranscriptText, setVoiceTranscriptText] = useState('');
   const [botMessages, setBotMessages] = useState([
     {
       role: 'assistant',
@@ -26,6 +67,11 @@ const InteractivePortfolio = () => {
   const hexCanvasRef = useRef(null);
   const terminalRef = useRef(null);
   const botRef = useRef(null);
+  const lottieRef = useRef(null);
+  const lottieInstanceRef = useRef(null);
+  const voiceStartTimeoutRef = useRef(null);
+  const voiceAudioRef = useRef(null);
+  const voiceTranscriptIntervalRef = useRef(null);
 
   const languages = {
     python: {
@@ -142,16 +188,19 @@ const InteractivePortfolio = () => {
   const getBotAnswer = (question) => {
     const lower = question.toLowerCase();
     if (lower.includes('lipi') || lower.includes('translate') || lower.includes('startup')) {
-      return 'LipiTranslate.in is Hemant Solanki’s founder-led Indic AI product. It focuses on translating full PDFs into Indian languages, helping students, teams, and knowledge workers understand documents without depending only on English. The roadmap is to grow from PDF translation into broader document intelligence.';
+      return 'LipiTranslate.in is Hemant Solanki\'s founder-led Indic AI product. It focuses on translating full PDFs into Indian languages, helping students, teams, and knowledge workers understand documents without depending only on English. The roadmap is to grow from PDF translation into broader document intelligence.';
     }
     if (lower.includes('reliance') || lower.includes('job') || lower.includes('role')) {
       return 'Hemant joined Reliance Group in Feb 2026 as Assistant Manager - AI & Data. His current focus is applied AI systems, agentic workflows, LLM pipelines, analytics automation, and enterprise data use cases.';
+    }
+    if (lower.includes('hire') || lower.includes('recruit') || lower.includes('fit') || lower.includes('why')) {
+      return 'Hemant is a strong fit for AI and data roles because he combines production analytics experience with hands-on AI product building. He has delivered dashboards, automation, quality systems, LLM workflows, and founder-led product work through LipiTranslate.in.';
     }
     if (lower.includes('project')) {
       return 'Key projects include LipiTranslate.in, AI Resume & Job Match Analyzer, NIA Voice Translator, StackIt 2.0, and NIA AI Voice Assistant. Together they show applied AI, NLP, document workflows, voice interfaces, and production-style web applications.';
     }
     if (lower.includes('skill') || lower.includes('tech')) {
-      return 'Hemant’s core skills include Python, SQL, R, Tableau, Power BI, Flask, REST APIs, Gemini API, Claude, OpenClaw, LLM pipelines, workflow automation, and data quality systems.';
+      return 'Hemant\'s core skills include Python, SQL, R, Tableau, Power BI, Flask, REST APIs, Gemini API, Claude, OpenClaw, LLM pipelines, workflow automation, and data quality systems.';
     }
     if (lower.includes('contact') || lower.includes('email')) {
       return 'You can reach Hemant at hemantsolanki333@gmail.com, connect on LinkedIn, or explore his GitHub at github.com/earlywinter96.';
@@ -173,7 +222,23 @@ const InteractivePortfolio = () => {
   const sendBotMessage = async (message = botInput) => {
     const clean = message.trim();
     if (!clean || botThinking) return;
+    const navigationTarget = getPortfolioNavigationTarget(clean);
     setBotOpen(true);
+    setIntroComplete(true);
+    setVoicePanelOpen(false);
+    if (typeof window !== 'undefined') {
+      voiceAudioRef.current?.pause();
+      voiceAudioRef.current = null;
+      if (voiceStartTimeoutRef.current) {
+        window.clearTimeout(voiceStartTimeoutRef.current);
+        voiceStartTimeoutRef.current = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null;
+        window.speechSynthesis.cancel();
+      }
+    }
+    setVoiceStatus('idle');
     setBotInput('');
     setBotThinking(true);
     setBotMessages(prev => [
@@ -181,22 +246,449 @@ const InteractivePortfolio = () => {
       { role: 'user', text: clean },
       { role: 'assistant', text: 'Thinking with live portfolio AI...', pending: true }
     ]);
+    if (navigationTarget) {
+      window.setTimeout(() => {
+        scrollToSection(navigationTarget.sectionId);
+      }, 350);
+    }
 
     try {
       const answer = await getLiveBotAnswer(clean);
+      const navigationPrefix = navigationTarget ? `Opening the ${navigationTarget.label} section for you. ` : '';
+      const finalAnswer = `${navigationPrefix}${answer || getBotAnswer(clean)}`;
       setBotMessages(prev => [
         ...prev.slice(0, -1),
-        { role: 'assistant', text: answer || getBotAnswer(clean) }
+        { role: 'assistant', text: finalAnswer }
       ]);
+      if (voiceRepliesEnabled) {
+        playSarvamVoice(finalAnswer, () => {
+          setVoicePlaying(false);
+          setVoiceStatus('idle');
+        });
+      }
     } catch (error) {
+      const navigationPrefix = navigationTarget ? `Opening the ${navigationTarget.label} section for you. ` : '';
+      const fallbackAnswer = `${navigationPrefix}${getBotAnswer(clean)}`;
       setBotMessages(prev => [
         ...prev.slice(0, -1),
-        { role: 'assistant', text: getBotAnswer(clean) }
+        { role: 'assistant', text: fallbackAnswer }
       ]);
+      if (voiceRepliesEnabled) {
+        playSarvamVoice(fallbackAnswer, () => {
+          setVoicePlaying(false);
+          setVoiceStatus('idle');
+        });
+      }
     } finally {
       setBotThinking(false);
     }
   };
+
+  const sectionIntelligence = {
+    hero: {
+      label: 'Portfolio overview',
+      insight: 'Ask me for a 30-second profile summary.',
+      prompt: 'Give me a 30-second professional summary of Hemant.'
+    },
+    about: {
+      label: 'About Hemant',
+      insight: 'I can explain his AI and data profile in recruiter language.',
+      prompt: 'Summarize Hemant as an AI and data professional.'
+    },
+    experience: {
+      label: 'Reliance experience',
+      insight: 'Ask how Reliance, analytics, and AI automation connect.',
+      prompt: 'Explain Hemant’s Reliance role and AI data experience.'
+    },
+    projects: {
+      label: 'Project intelligence',
+      insight: 'I can recommend the most relevant project for a hiring manager.',
+      prompt: 'Which Hemant project should a recruiter look at first?'
+    },
+    startup: {
+      label: 'Startup mode',
+      insight: 'Ask for the LipiTranslate.in founder pitch.',
+      prompt: 'Pitch LipiTranslate.in in a clear founder style.'
+    },
+    skills: {
+      label: 'Skill graph',
+      insight: 'I can map his technical stack to AI/data roles.',
+      prompt: 'Map Hemant’s skills to AI and data roles.'
+    },
+    testimonials: {
+      label: 'Proof signals',
+      insight: 'Ask me to turn proof points into a hiring argument.',
+      prompt: 'Convert Hemant’s proof points into a hiring argument.'
+    },
+    contact: {
+      label: 'Contact mode',
+      insight: 'I can draft a short outreach message.',
+      prompt: 'Draft a short professional outreach message to Hemant.'
+    }
+  };
+
+  const activeIntel = sectionIntelligence[activeSection] || sectionIntelligence.hero;
+
+  const quickPromptsBySection = {
+    hero: ['30-sec summary', 'Why hire Hemant?', 'Best projects'],
+    about: ['Summarize profile', 'Core skills', 'Why hire Hemant?'],
+    experience: ['Reliance role', 'Impact proof', 'AI automation'],
+    projects: ['Best projects', 'AI product examples', 'Resume analyzer'],
+    startup: ['Pitch LipiTranslate', 'Who uses it?', 'Founder profile'],
+    skills: ['Core skills', 'AI/data role fit', 'Tool stack'],
+    testimonials: ['Hiring argument', 'Proof points', 'Strengths'],
+    contact: ['Contact Hemant', 'Draft message', 'LinkedIn summary']
+  };
+
+  const compactPrompts = quickPromptsBySection[activeSection] || quickPromptsBySection.hero;
+
+  const browsePrompts = [
+    { label: 'Projects', prompt: "Show me Hemant's best AI projects.", icon: <Code2 size={12} /> },
+    { label: 'LipiTranslate', prompt: 'Explain LipiTranslate.in as a startup pitch.', icon: <Globe size={12} /> },
+    { label: 'Reliance', prompt: "Explain Hemant's Reliance AI and Data role.", icon: <Database size={12} /> }
+  ];
+
+  const voiceIntroText = "Hello, I am Hemant's virtual AI assistant. I am here to introduce Hemant, his creativity, and his work in AI and data. Hemant is an Assistant Manager, AI and Data at Reliance Group in Mumbai. He works across Python, SQL, R, dashboards, automation, and practical AI systems. He is also the founder of LipiTranslate dot in, an Indic AI product for translating full PDFs into Indian languages. Hemant builds useful AI projects across document intelligence, voice tools, analytics, and automation. This portfolio shows his Reliance work, AI projects, startup direction, and the impact he can bring to data and AI teams.";
+
+  const scrollToSection = useCallback((sectionId) => {
+    setCommandOpen(false);
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
+  const clearVoiceTranscriptSync = useCallback(() => {
+    if (typeof window !== 'undefined' && voiceTranscriptIntervalRef.current) {
+      window.clearInterval(voiceTranscriptIntervalRef.current);
+    }
+    voiceTranscriptIntervalRef.current = null;
+  }, []);
+
+  const showVoiceLoadingText = useCallback((text) => {
+    clearVoiceTranscriptSync();
+    const firstSentence = text.split('.').find(Boolean)?.trim();
+    setVoiceTranscriptText(firstSentence ? `${firstSentence}.` : text.slice(0, 120));
+  }, [clearVoiceTranscriptSync]);
+
+  const startVoiceTranscriptSync = useCallback((text, durationMs = 18000) => {
+    clearVoiceTranscriptSync();
+    const words = text.split(/\s+/).filter(Boolean);
+    if (!words.length || typeof window === 'undefined') {
+      setVoiceTranscriptText(text);
+      return;
+    }
+
+    let index = 0;
+    setVoiceTranscriptText('');
+    const stepMs = Math.max(90, durationMs / words.length);
+    voiceTranscriptIntervalRef.current = window.setInterval(() => {
+      index += 1;
+      setVoiceTranscriptText(words.slice(0, index).join(' '));
+      if (index >= words.length) {
+        clearVoiceTranscriptSync();
+      }
+    }, stepMs);
+  }, [clearVoiceTranscriptSync]);
+
+  const completeIntro = useCallback(() => {
+    clearVoiceTranscriptSync();
+    setVoicePlaying(false);
+    setIntroComplete(true);
+    setVoicePanelOpen(false);
+    setVoiceStatus('idle');
+    setVoiceTranscriptText('');
+  }, [clearVoiceTranscriptSync]);
+
+  const getNaturalIntroVoice = useCallback(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis?.getVoices) return null;
+
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return null;
+
+    const preferredNames = [
+      'samantha',
+      'ava',
+      'allison',
+      'susan',
+      'victoria',
+      'daniel',
+      'alex',
+      'google uk english female',
+      'google us english',
+      'microsoft aria',
+      'microsoft jenny',
+      'microsoft guy',
+      'rishi',
+      'veena',
+      'karen'
+    ];
+
+    const scoreVoice = (voice) => {
+      const name = voice.name.toLowerCase();
+      const lang = voice.lang.toLowerCase();
+      let score = lang.startsWith('en') ? 40 : 0;
+      const preferredIndex = preferredNames.findIndex((preferred) => name.includes(preferred));
+      if (preferredIndex >= 0) score += 120 - preferredIndex;
+      if (name.includes('enhanced') || name.includes('premium') || name.includes('natural') || name.includes('neural')) score += 35;
+      if (name.includes('google') || name.includes('microsoft') || name.includes('apple')) score += 20;
+      if (lang === 'en-in') score += 12;
+      if (lang === 'en-gb' || lang === 'en-us') score += 8;
+      if (voice.localService) score += 4;
+      if (voice.default) score += 2;
+      return score;
+    };
+
+    return [...voices].sort((a, b) => scoreVoice(b) - scoreVoice(a))[0] || null;
+  }, []);
+
+  const playBrowserVoiceFallback = useCallback((text, onDone = completeIntro) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      onDone();
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    showVoiceLoadingText(text);
+    if (voiceStartTimeoutRef.current) {
+      window.clearTimeout(voiceStartTimeoutRef.current);
+      voiceStartTimeoutRef.current = null;
+    }
+
+    const speakIntro = () => {
+      const selectedVoice = getNaturalIntroVoice();
+      const utterance = new window.SpeechSynthesisUtterance(text);
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice?.lang || 'en-IN';
+      utterance.rate = 0.82;
+      utterance.pitch = 0.92;
+      utterance.volume = 1;
+      utterance.onend = onDone;
+      utterance.onerror = onDone;
+      startVoiceTranscriptSync(text, Math.max(12000, text.split(/\s+/).length * 410));
+      window.speechSynthesis.speak(utterance);
+    };
+
+    setVoiceStatus('fallback');
+    setVoicePlaying(true);
+    if (!window.speechSynthesis.getVoices().length) {
+      const startWhenVoicesLoad = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        voiceStartTimeoutRef.current = null;
+        speakIntro();
+      };
+      window.speechSynthesis.onvoiceschanged = startWhenVoicesLoad;
+      voiceStartTimeoutRef.current = window.setTimeout(startWhenVoicesLoad, 500);
+      return;
+    }
+
+    speakIntro();
+  }, [completeIntro, getNaturalIntroVoice, showVoiceLoadingText, startVoiceTranscriptSync]);
+
+  const playSarvamVoice = useCallback(async (text, onDone = completeIntro) => {
+    if (typeof window === 'undefined') {
+      onDone();
+      return;
+    }
+
+    try {
+      voiceAudioRef.current?.pause();
+      voiceAudioRef.current = null;
+      showVoiceLoadingText(text);
+      setVoiceStatus('loading');
+      setVoicePlaying(true);
+
+      const response = await fetch('/api/portfolio-voice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, speaker: 'ratan' })
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.audioContent) {
+        throw new Error(payload.error || 'Voice generation failed.');
+      }
+
+      const audio = new Audio(`data:${payload.mimeType || 'audio/mpeg'};base64,${payload.audioContent}`);
+      voiceAudioRef.current = audio;
+      audio.onended = () => {
+        setVoiceTranscriptText(text);
+        onDone();
+      };
+      audio.onerror = () => playBrowserVoiceFallback(text, onDone);
+      await new Promise((resolve) => {
+        const finish = () => resolve();
+        audio.onloadedmetadata = finish;
+        window.setTimeout(finish, 350);
+      });
+      const durationMs = Number.isFinite(audio.duration) && audio.duration > 0
+        ? audio.duration * 1000
+        : Math.max(12000, text.split(/\s+/).length * 360);
+      setVoiceStatus('sarvam');
+      startVoiceTranscriptSync(text, durationMs);
+      await audio.play();
+    } catch (error) {
+      playBrowserVoiceFallback(text, onDone);
+    }
+  }, [completeIntro, playBrowserVoiceFallback, showVoiceLoadingText, startVoiceTranscriptSync]);
+
+  const playVoiceIntro = useCallback(() => {
+    setBotOpen(true);
+    setVoicePanelOpen(true);
+    setIntroComplete(false);
+
+    if (typeof window === 'undefined') {
+      completeIntro();
+      return;
+    }
+
+    voiceAudioRef.current?.pause();
+    voiceAudioRef.current = null;
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    if (voiceStartTimeoutRef.current) {
+      window.clearTimeout(voiceStartTimeoutRef.current);
+      voiceStartTimeoutRef.current = null;
+    }
+
+    playSarvamVoice(voiceIntroText, completeIntro);
+  }, [completeIntro, playSarvamVoice, voiceIntroText]);
+
+  const stopVoiceIntro = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      voiceAudioRef.current?.pause();
+      voiceAudioRef.current = null;
+      clearVoiceTranscriptSync();
+      if (voiceStartTimeoutRef.current) {
+        window.clearTimeout(voiceStartTimeoutRef.current);
+        voiceStartTimeoutRef.current = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null;
+        window.speechSynthesis.cancel();
+      }
+    }
+    setVoicePlaying(false);
+    setVoiceStatus('idle');
+    setVoiceTranscriptText('');
+  }, [clearVoiceTranscriptSync]);
+
+  const openBotWithIntro = useCallback(() => {
+    if (introComplete) {
+      setBotOpen(true);
+      return;
+    }
+    playVoiceIntro();
+  }, [introComplete, playVoiceIntro]);
+
+  useEffect(() => {
+    if (!voicePanelOpen || !lottieRef.current) return;
+    let mounted = true;
+
+    import('lottie-web').then((module) => {
+      if (!mounted || !lottieRef.current) return;
+      const lottie = module.default || module;
+      lottieInstanceRef.current?.destroy();
+      lottieInstanceRef.current = lottie.loadAnimation({
+        container: lottieRef.current,
+        renderer: 'svg',
+        loop: true,
+        autoplay: voicePlaying,
+        path: '/agent-ai.json?v=hemant-ai'
+      });
+    });
+
+    return () => {
+      mounted = false;
+      lottieInstanceRef.current?.destroy();
+      lottieInstanceRef.current = null;
+    };
+  }, [voicePanelOpen]);
+
+  useEffect(() => {
+    if (!lottieInstanceRef.current) return;
+    if (voicePlaying) {
+      lottieInstanceRef.current.play();
+    } else {
+      lottieInstanceRef.current.pause();
+    }
+  }, [voicePlaying]);
+
+  useEffect(() => {
+    const handleCommandKey = (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setCommandOpen(prev => !prev);
+        setCommandQuery('');
+      }
+      if (event.key === 'Escape') {
+        setCommandOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleCommandKey);
+    return () => window.removeEventListener('keydown', handleCommandKey);
+  }, []);
+
+  useEffect(() => {
+    return () => stopVoiceIntro();
+  }, [stopVoiceIntro]);
+
+  const commandItems = [
+    {
+      title: 'Ask section-aware AI',
+      subtitle: activeIntel.label,
+      icon: <Brain size={16} />,
+      keywords: 'ai assistant current section ask',
+      action: () => sendBotMessage(activeIntel.prompt)
+    },
+    {
+      title: 'Play voice intro',
+      subtitle: 'Hear a calm portfolio summary',
+      icon: <Play size={16} />,
+      keywords: 'voice intro speech play audio',
+      action: playVoiceIntro
+    },
+    {
+      title: 'Open Hemant.ai',
+      subtitle: 'Chat with the live portfolio assistant',
+      icon: <MessageCircle size={16} />,
+      keywords: 'chat bot assistant hemant ai',
+      action: openBotWithIntro
+    },
+    {
+      title: 'Go to Projects',
+      subtitle: 'See AI and data projects',
+      icon: <Code2 size={16} />,
+      keywords: 'projects work portfolio',
+      action: () => scrollToSection('projects')
+    },
+    {
+      title: 'Go to LipiTranslate',
+      subtitle: 'Open startup section',
+      icon: <Globe size={16} />,
+      keywords: 'startup lipitranslate product',
+      action: () => scrollToSection('startup')
+    },
+    {
+      title: 'Download resume',
+      subtitle: 'Open resume in a new tab',
+      icon: <Download size={16} />,
+      keywords: 'resume cv download',
+      action: () => window.open('https://drive.google.com/file/d/1PVD5m85SBka0tVvd0ilvzdS_zNmI69mg/view?usp=sharing', '_blank', 'noopener,noreferrer')
+    },
+    {
+      title: 'Contact Hemant',
+      subtitle: 'Send an email',
+      icon: <Mail size={16} />,
+      keywords: 'email contact hire',
+      action: () => { window.location.href = 'mailto:hemantsolanki333@gmail.com'; }
+    }
+  ];
+
+  const filteredCommands = commandItems.filter((item) => {
+    const query = commandQuery.trim().toLowerCase();
+    if (!query) return true;
+    return `${item.title} ${item.subtitle} ${item.keywords}`.toLowerCase().includes(query);
+  });
 
   useEffect(() => {
     let ticking = false;
@@ -988,66 +1480,228 @@ const InteractivePortfolio = () => {
 
       {/* Portfolio Bot */}
       <button
-        onClick={() => setBotOpen(true)}
-        className={`fixed bottom-5 right-5 z-50 flex items-center gap-3 px-5 py-4 bg-cyan-500/20 border border-cyan-400/50 text-cyan-200 rounded-2xl backdrop-blur-xl shadow-2xl hover:bg-cyan-500/30 transition-all font-bold ${botOpen ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100'}`}
+        type="button"
+        onClick={openBotWithIntro}
+        className={`fixed bottom-4 right-4 z-50 w-auto max-w-[230px] cursor-pointer rounded-2xl border border-cyan-400/35 bg-[#020817]/92 p-2.5 text-left shadow-2xl backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1 hover:border-cyan-300/70 hover:bg-cyan-500/10 focus:outline-none focus:ring-2 focus:ring-cyan-300/70 sm:bottom-5 sm:right-5 ${botOpen ? 'opacity-0 pointer-events-none translate-y-4' : 'opacity-100'}`}
         aria-label="Open Hemant AI bot"
       >
-        <MessageCircle size={22} />
-        <span className="hidden sm:inline">Ask Hemant.ai</span>
+        <span className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_88%_20%,rgba(0,217,255,0.20),transparent_38%)]" />
+        <span className="relative flex items-center gap-2.5">
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-300/40 bg-cyan-500/15 shadow-[0_0_22px_rgba(0,217,255,0.20)]">
+            <Brain size={19} className="text-cyan-100" />
+            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-green-400 shadow-[0_0_10px_rgba(34,197,94,0.9)]" />
+          </span>
+          <span className="hidden min-w-0 flex-1 sm:block">
+            <span className="block text-[9px] uppercase tracking-[0.18em] text-cyan-300/80">Hemant.ai</span>
+            <span className="mt-0.5 block truncate text-sm font-bold text-white">{activeIntel.label}</span>
+          </span>
+          <kbd className="hidden rounded-md border border-cyan-300/25 bg-white/5 px-1.5 py-1 text-[10px] text-cyan-200 md:block">⌘K</kbd>
+          <ChevronRight size={16} className="hidden shrink-0 text-cyan-300 sm:block" />
+        </span>
       </button>
 
       {botOpen && (
-        <div className="fixed bottom-5 right-5 z-50 w-[calc(100vw-2.5rem)] max-w-md overflow-hidden rounded-2xl border border-cyan-400/40 bg-[#020817]/95 backdrop-blur-2xl shadow-2xl">
-          <div className="flex items-center justify-between gap-3 p-4 border-b border-cyan-500/30 bg-cyan-500/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center">
-                <MessageCircle className="text-cyan-300" size={20} />
-              </div>
-              <div>
-                <p className="text-cyan-300 font-bold">Hemant.ai</p>
-                <p className="text-xs text-gray-400">Portfolio bot</p>
-              </div>
-            </div>
-            <button onClick={() => setBotOpen(false)} className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all" aria-label="Close Hemant AI bot">
-              <X size={18} />
-            </button>
-          </div>
-
-          <div ref={botRef} className="h-80 overflow-y-auto terminal-scroll p-4 space-y-3">
-            {botMessages.map((message, idx) => (
-              <div key={idx} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed border ${
-                  message.role === 'user'
-                    ? 'bg-cyan-500/25 border-cyan-400/40 text-white'
-                    : `bg-[#0f172a]/80 border-white/10 text-gray-100 ${message.pending ? 'animate-pulse' : ''}`
-                }`}>
-                  {message.text}
+        <div className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-2xl border border-cyan-400/40 bg-[#020817]/95 backdrop-blur-2xl shadow-2xl animate-botPanel sm:bottom-5 sm:right-5">
+          <div className="relative overflow-hidden border-b border-cyan-500/30 bg-cyan-500/10 p-3">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_10%,rgba(0,217,255,0.22),transparent_36%)] pointer-events-none" />
+            <div className="relative flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="mini-agent" aria-hidden="true">
+                  <span className="mini-agent-visor">
+                    <span />
+                    <span />
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-cyan-300">Hemant.ai</p>
+                  <p className="text-[11px] text-gray-400">{introComplete ? 'Live portfolio assistant' : 'Voice intro in progress'}</p>
                 </div>
               </div>
-            ))}
-          </div>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setCommandOpen(true)}
+                  className="p-2 rounded-lg text-gray-300 hover:text-cyan-200 hover:bg-white/10 transition-all"
+                  aria-label="Open command palette"
+                >
+                  <Terminal size={17} />
+                </button>
+                <button
+                  onClick={() => {
+                    stopVoiceIntro();
+                    setBotOpen(false);
+                  }}
+                  className="p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-all"
+                  aria-label="Close Hemant AI bot"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-2 gap-2 px-4 pb-3">
-            {['Tell me about Reliance', 'Pitch LipiTranslate', 'Best projects', 'Core skills'].map((prompt) => (
-              <button key={prompt} onClick={() => sendBotMessage(prompt)} disabled={botThinking}
-                className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-xs text-gray-200 hover:bg-cyan-500/15 hover:border-cyan-400/40 transition-all">
-                {prompt}
+            {introComplete && (
+              <button
+                onClick={() => sendBotMessage(activeIntel.prompt)}
+                disabled={botThinking}
+                className="relative mt-3 w-full rounded-xl border border-cyan-400/25 bg-black/25 px-3 py-2.5 text-left transition-all hover:border-cyan-300/50 hover:bg-cyan-500/10 disabled:opacity-60"
+              >
+                <span className="block text-[9px] uppercase tracking-[0.2em] text-cyan-400/80">Viewing {activeIntel.label}</span>
+                <span className="mt-1 block text-xs text-gray-100">{activeIntel.insight}</span>
               </button>
-            ))}
+            )}
           </div>
 
-          <form onSubmit={(event) => { event.preventDefault(); sendBotMessage(); }} className="flex gap-2 p-4 border-t border-cyan-500/30">
-            <input
-              value={botInput}
-              onChange={(event) => setBotInput(event.target.value)}
-              placeholder="Ask about Hemant..."
-              disabled={botThinking}
-              className="min-w-0 flex-1 rounded-xl bg-black/30 border border-cyan-500/30 px-4 py-3 text-sm text-white outline-none focus:border-cyan-400"
-            />
-            <button type="submit" disabled={botThinking} className="px-4 py-3 rounded-xl bg-cyan-500/25 border border-cyan-400 text-white hover:bg-cyan-500/35 transition-all disabled:opacity-60" aria-label="Send bot message">
-              {botThinking ? <Circle size={18} className="animate-pulse fill-current" /> : <Send size={18} />}
-            </button>
-          </form>
+          {!introComplete ? (
+            <div className="p-4">
+              <div className="rounded-2xl border border-cyan-400/25 bg-white/[0.04] p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                <div ref={lottieRef} className="mx-auto h-28 w-28 overflow-hidden rounded-2xl border border-cyan-400/20 bg-black/25" />
+                <p className="mt-3 text-sm font-bold text-white">Meet Hemant through a guided intro</p>
+                <p className="mt-1 text-[11px] text-cyan-200">
+                  {voiceStatus === 'loading' ? 'Generating Indian voice with Sarvam AI...' : voiceStatus === 'sarvam' ? 'Voice and transcript are synced...' : voicePlaying ? 'Playing guided intro...' : 'Preparing portfolio assistant...'}
+                </p>
+                <div className="mt-3 max-h-24 overflow-y-auto rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-left text-[11px] leading-relaxed text-gray-300 terminal-scroll">
+                  <span>{voiceTranscriptText || 'Connecting to Sarvam voice and preparing the intro transcript...'}</span>
+                  {(voicePlaying || voiceStatus === 'loading') && <span className="ml-1 inline-block h-3 w-1 translate-y-0.5 animate-pulse rounded-full bg-cyan-300" />}
+                </div>
+                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <span className={`block h-full rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(103,232,249,0.75)] ${voiceStatus === 'loading' ? 'animate-[pulse_1s_ease-in-out_infinite] w-1/3' : voicePlaying ? 'animate-[pulse_1.4s_ease-in-out_infinite] w-2/3' : 'w-1/4'}`} />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopVoiceIntro();
+                    completeIntro();
+                  }}
+                  className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-bold text-cyan-100 transition-all hover:border-cyan-300/60 hover:bg-cyan-500/25 focus:outline-none focus:ring-2 focus:ring-cyan-300/60"
+                >
+                  Skip intro
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div ref={botRef} className="h-56 overflow-y-auto terminal-scroll p-3 space-y-3">
+                {botMessages.map((message, idx) => (
+                  <div key={idx} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed border ${
+                      message.role === 'user'
+                        ? 'bg-cyan-500/25 border-cyan-400/40 text-white'
+                        : `bg-[#0f172a]/80 border-white/10 text-gray-100 ${message.pending ? 'animate-pulse' : ''}`
+                    }`}>
+                      {message.text}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-2 px-3 pb-2">
+                {browsePrompts.map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    onClick={() => sendBotMessage(item.prompt)}
+                    disabled={botThinking}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/20 bg-cyan-500/10 px-2.5 py-1.5 text-[11px] text-cyan-100 transition-all hover:border-cyan-300/50 hover:bg-cyan-500/20 disabled:opacity-60"
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap gap-2 px-3 pb-3">
+                {compactPrompts.map((prompt) => (
+                  <button key={prompt} onClick={() => sendBotMessage(prompt)} disabled={botThinking}
+                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-gray-200 transition-all hover:border-cyan-400/40 hover:bg-cyan-500/15">
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center justify-between gap-3 border-t border-cyan-500/20 px-3 py-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setVoiceRepliesEnabled(prev => {
+                      const next = !prev;
+                      if (!next) stopVoiceIntro();
+                      return next;
+                    });
+                  }}
+                  className={`inline-flex cursor-pointer items-center gap-2 rounded-lg border px-2.5 py-1.5 text-[11px] transition-all ${
+                    voiceRepliesEnabled
+                      ? 'border-cyan-400/35 bg-cyan-500/15 text-cyan-100'
+                      : 'border-white/10 bg-white/5 text-gray-400'
+                  }`}
+                >
+                  <Volume2 size={13} />
+                  Voice replies {voiceRepliesEnabled ? 'on' : 'off'}
+                </button>
+                <span className="truncate text-[10px] text-gray-500">
+                  {voiceStatus === 'sarvam' ? 'Sarvam Indian voice active' : voicePlaying ? 'Speaking...' : 'Text + voice agent'}
+                </span>
+              </div>
+
+              <form onSubmit={(event) => { event.preventDefault(); sendBotMessage(); }} className="flex gap-2 border-t border-cyan-500/30 p-3">
+                <input
+                  value={botInput}
+                  onChange={(event) => setBotInput(event.target.value)}
+                  placeholder="Ask Hemant.ai..."
+                  disabled={botThinking}
+                  className="min-w-0 flex-1 rounded-xl border border-cyan-500/30 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-cyan-400"
+                />
+                <button type="submit" disabled={botThinking} className="rounded-xl border border-cyan-400 bg-cyan-500/25 px-3.5 py-2.5 text-white transition-all hover:bg-cyan-500/35 disabled:opacity-60" aria-label="Send bot message">
+                  {botThinking ? <Circle size={18} className="animate-pulse fill-current" /> : <Send size={18} />}
+                </button>
+              </form>
+            </>
+          )}
+        </div>
+      )}
+
+      {commandOpen && (
+        <div className="fixed inset-0 z-[70] flex items-start justify-center bg-black/55 px-4 pt-24 backdrop-blur-sm" onClick={() => setCommandOpen(false)}>
+          <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-cyan-400/35 bg-[#020817]/96 shadow-2xl backdrop-blur-2xl animate-botPanel" onClick={(event) => event.stopPropagation()}>
+            <div className="flex items-center gap-3 border-b border-cyan-500/25 p-3">
+              <Terminal size={18} className="text-cyan-300" />
+              <input
+                value={commandQuery}
+                onChange={(event) => setCommandQuery(event.target.value)}
+                autoFocus
+                placeholder="Search portfolio commands..."
+                className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-gray-500"
+              />
+              <kbd className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-[10px] text-gray-300">Esc</kbd>
+            </div>
+
+            <div className="max-h-[360px] overflow-y-auto terminal-scroll p-2">
+              {filteredCommands.length > 0 ? (
+                filteredCommands.map((item) => (
+                  <button
+                    key={item.title}
+                    type="button"
+                    onClick={() => {
+                      setCommandOpen(false);
+                      item.action();
+                    }}
+                    className="group flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-all hover:bg-cyan-500/10 focus:bg-cyan-500/10 focus:outline-none"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-cyan-400/25 bg-cyan-500/10 text-cyan-200 group-hover:border-cyan-300/50">
+                      {item.icon}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-bold text-white">{item.title}</span>
+                      <span className="mt-0.5 block truncate text-xs text-gray-400">{item.subtitle}</span>
+                    </span>
+                    <ChevronRight size={16} className="text-gray-500 group-hover:text-cyan-300" />
+                  </button>
+                ))
+              ) : (
+                <div className="px-3 py-8 text-center text-sm text-gray-400">No command found.</div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
@@ -1093,6 +1747,55 @@ const InteractivePortfolio = () => {
         .animate-float-slow { animation: float-slow 20s ease-in-out infinite; }
         .animate-float-slower { animation: float-slower 25s ease-in-out infinite; }
         .animate-float-slowest { animation: float-slowest 30s ease-in-out infinite; }
+        .mini-agent {
+          position: relative;
+          width: 42px;
+          height: 42px;
+          border-radius: 16px;
+          border: 1px solid rgba(0, 217, 255, 0.42);
+          background:
+            radial-gradient(circle at 50% 18%, rgba(255,255,255,0.18), transparent 30%),
+            linear-gradient(145deg, rgba(0, 217, 255, 0.2), rgba(15, 23, 42, 0.95));
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 0 28px rgba(0, 217, 255, 0.2);
+          animation: mini-agent-idle 2.2s ease-in-out infinite;
+        }
+        .mini-agent-visor {
+          position: absolute;
+          left: 8px;
+          right: 8px;
+          top: 14px;
+          height: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          border-radius: 999px;
+          background: rgba(2, 8, 23, 0.84);
+          border: 1px solid rgba(0, 217, 255, 0.36);
+        }
+        .mini-agent-visor span {
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: #b8f7ff;
+          box-shadow: 0 0 8px rgba(0, 217, 255, 0.9);
+        }
+        .animate-botPanel {
+          animation: bot-panel 360ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes mini-agent-idle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-3px); }
+        }
+        @keyframes bot-panel {
+          from { opacity: 0; transform: translate3d(12px, 18px, 0) scale(0.96); }
+          to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .mini-agent,
+          .animate-botPanel {
+            animation: none !important;
+          }
+        }
         kbd { font-family: 'Fira Code', monospace; font-weight: 600; }
         .terminal-scroll::-webkit-scrollbar { width: 6px; }
         .terminal-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.4); }
