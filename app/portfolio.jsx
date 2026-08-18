@@ -1083,18 +1083,62 @@ const InteractivePortfolio = () => {
               </div>
             </div>
 
-            <div className="mt-12 p-10 bg-[#0f172a]/70 backdrop-blur-xl border border-cyan-500/30 rounded-xl shadow-2xl">
-              <div className="flex items-start gap-4">
-                <Terminal className="text-cyan-400 mt-1 w-8 h-8 animate-pulse-glow" />
-                <div>
-                  <h3 className="text-3xl font-bold mb-4 text-cyan-300">$ whoami</h3>
-                  <p className="text-white leading-relaxed text-lg">
-                    I'm an Assistant Manager – AI & Data at Reliance Group with 6+ years of experience turning raw data into clear, actionable insights.
-                    I build and deploy Agentic AI solutions, develop intelligent agents using OpenClaw and Claude for workflow automation, and integrate Generative AI into analytics pipelines.
-                    I am also building LipiTranslate.in, an Indic AI product focused on full PDF translation into Indian languages.
-                    Currently working at the intersection of enterprise data and cutting-edge AI — designing scalable systems that reduce manual effort and drive real business impact.
-                    Open to work and excited to collaborate on impactful data and AI projects.
-                  </p>
+            <div className="mt-12 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] items-stretch">
+              <div className="group relative overflow-hidden rounded-xl border border-cyan-500/30 bg-[#0f172a]/70 shadow-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-transparent to-yellow-500/10 opacity-80" />
+                <img
+                  src="/hemant-builder-portrait.png"
+                  alt="AI generated builder portrait of Hemant Solanki focused on data, AI, dashboards, and LipiTranslate.in"
+                  className="relative h-full min-h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-x-0 bottom-0 border-t border-cyan-300/25 bg-[#020817]/82 px-5 py-4 backdrop-blur-xl">
+                  <p className="font-mono text-xs uppercase tracking-[0.24em] text-cyan-300">Data today, impact tomorrow</p>
+                  <p className="mt-1 text-sm text-gray-200">A visual snapshot of the way I think: observe, analyze, automate, elevate.</p>
+                </div>
+              </div>
+
+              <div className="p-8 md:p-10 bg-[#0f172a]/70 backdrop-blur-xl border border-cyan-500/30 rounded-xl shadow-2xl">
+                <div className="flex items-start gap-4">
+                  <Terminal className="text-cyan-400 mt-1 w-8 h-8 animate-pulse-glow" />
+                  <div>
+                    <p className="mb-3 font-mono text-sm text-cyan-400">$ whoami</p>
+                    <h3 className="text-3xl md:text-4xl font-bold mb-5 text-white">AI and data builder with a product mindset.</h3>
+                    <p className="text-gray-100 leading-relaxed text-lg">
+                      I'm an Assistant Manager - AI & Data at Reliance Group with 6+ years of experience turning raw data into clear, actionable insights.
+                      I build agentic AI solutions, dashboard systems, automation workflows, and practical tools that reduce manual effort and improve decisions.
+                    </p>
+                    <p className="mt-5 text-gray-200 leading-relaxed">
+                      I am also building LipiTranslate.in, an Indic AI product focused on translating full PDFs into Indian languages. My work sits at the intersection of analytics, AI engineering, and useful product thinking.
+                    </p>
+                    <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                      {[
+                        ['Role', 'Assistant Manager, AI & Data'],
+                        ['Startup', 'Founder, LipiTranslate.in'],
+                        ['Focus', 'AI automation + BI impact']
+                      ].map(([label, value]) => (
+                        <div key={label} className="border-t border-cyan-400/30 pt-4">
+                          <p className="font-mono text-xs uppercase tracking-[0.2em] text-cyan-300">{label}</p>
+                          <p className="mt-2 text-sm font-bold text-white">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-8 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={() => sendBotMessage('Give a sharp recruiter summary of Hemant Solanki.')}
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-cyan-400 bg-cyan-500/20 px-5 py-3 font-bold text-cyan-100 transition-all hover:bg-cyan-500/30"
+                      >
+                        <MessageCircle size={16} /> Ask Hemant.ai
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollToSection('startup')}
+                        className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-yellow-400/70 bg-yellow-500/15 px-5 py-3 font-bold text-yellow-100 transition-all hover:bg-yellow-500/25"
+                      >
+                        <Globe size={16} /> View LipiTranslate.in
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
