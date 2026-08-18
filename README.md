@@ -1,5 +1,12 @@
 # Hemant Solanki - Premium Portfolio
 
+## Hemant Solanki Highlighted Name Badge
+
+**Hemant Solanki**  
+Assistant Manager - AI & Data at Reliance Group  
+Agentic AI Builder | GenAI | Automation | Decision Intelligence  
+Founder of LipiTranslate.in
+
 A modern portfolio website for an Assistant Manager, AI & Data with 6+ years across analytics, automation, AI products, and LipiTranslate.in.
 
 ## Features
